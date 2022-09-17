@@ -2,30 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(PhysicsObject))]
 public class Asteroid : MonoBehaviour
 {
-    public AsteroidData data;
-
-    public Vector2 velo;
+    public int size; // 0 is smallest
     public float splitSpeed = 1f;
+    public float splitSpin = 20f;
+
+    public PhysicsObject phys;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        
+        phys = GetComponent<PhysicsObject>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.position += (Vector3)velo * Time.deltaTime;
-    }
+        transform.position += (Vector3)phys.moveVelo * Time.deltaTime;
 
-    public void setData(AsteroidData data_)
-    {
-        data = data_;
-
-        GetComponent<SpriteRenderer>().sprite = data_.spr;
+        GameManager.loopObject(transform);
     }
 
     public void kill()
@@ -33,15 +30,26 @@ public class Asteroid : MonoBehaviour
         // Destroy this asteroid
         Destroy(gameObject);
 
-        if (data.size == 0)
+        if (size == 0)
             return;
 
         // Blow up into multiple asteroids
         for (int i = 0; i < 2; i++) {
-            Asteroid child = GameManager.spawnAsteroid(data.size-1, transform.position);
+            Asteroid child = GameManager.spawnAsteroid(size-1, transform.position);
 
             // Make this respect conservation of momentum and bullet weight
-            child.velo = Random.insideUnitCircle.normalized * splitSpeed;
+            child.phys.moveVelo = Random.insideUnitCircle.normalized * splitSpeed;
+
+            // Random spin
+            child.phys.spinVelo = Random.Range(-splitSpin, splitSpin);
         }
+    }
+
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        Player player = collision.GetComponent<Player>();
+
+        if (player != null)
+            player.kill();
     }
 }

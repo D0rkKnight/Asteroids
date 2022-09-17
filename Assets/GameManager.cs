@@ -5,8 +5,16 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public Player player;
-    public Asteroid asteroidPrefab;
-    public AsteroidData[] asteroidData;
+    public Player playerPrefab;
+
+    public Asteroid[] asteroidPrefabs;
+    public float[] astSpawnWeights;
+    public int astWeightTarget = 5;
+    public float astSpawnVelocity = 1f;
+    public float astSpawnSpin = 20f;
+
+    public float perimPadding = 1;
+
 
     public static GameManager sing;
 
@@ -17,17 +25,103 @@ public class GameManager : MonoBehaviour
             throw new System.Exception("GM Singleton broken");
 
         sing = this;
-
-        spawnAsteroid(2, Vector2.zero);
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Loop the player if they leave the camera
-        float padding = 1f;
+        if (player != null)
+            loopObject(player.transform);
 
-        Vector2 pPos = player.transform.position;
+        // Count the # of asteroids and spawn more if few are left
+        int totalAstWeight = 0;
+
+        GameObject[] asteroids = GameObject.FindGameObjectsWithTag("Asteroid");
+        foreach (GameObject g in asteroids)
+        {
+            // Loop the asteroid
+            loopObject(g.transform);
+
+            Asteroid a = g.GetComponent<Asteroid>();
+
+            totalAstWeight += a.size; // Use something else later
+        }
+
+        if (totalAstWeight < astWeightTarget)
+        {
+            // Get size
+            float wRange = 0f;
+            foreach (float f in astSpawnWeights)
+                wRange += f;
+
+            float randWeight = Random.Range(0, wRange);
+
+            int targetSize = 0;
+            for (int i=0; i<astSpawnWeights.Length; i++)
+            {
+                if (randWeight < astSpawnWeights[i])
+                {
+                    targetSize = i;
+                    break;
+                }
+                randWeight -= astSpawnWeights[i];
+            }
+
+            // Get random spot on the perimeter
+            Vector2 bl = Camera.main.ViewportToWorldPoint(Vector2.zero) - new Vector3(perimPadding, perimPadding);
+            Vector2 ur = Camera.main.ViewportToWorldPoint(new Vector2(1, 1)) + new Vector3(perimPadding, perimPadding);
+            float pw = ur.x - bl.x;
+            float ph = ur.y - bl.y;
+            float pRange = (pw + ph) * 2;
+
+            // Cycle ccw from bl
+            float randPerim = Random.Range(0, pRange);
+            Vector2 spawnPoint = bl;
+
+            // Actually genius solution
+            spawnPoint.x += Mathf.Min(pw, randPerim);
+            randPerim = Mathf.Max(0, randPerim - pw);
+
+            spawnPoint.y += Mathf.Min(ph, randPerim);
+            randPerim = Mathf.Max(0, randPerim - ph);
+
+            spawnPoint.x -= Mathf.Min(pw, randPerim);
+            randPerim = Mathf.Max(0, randPerim - pw);
+
+            spawnPoint.y -= Mathf.Min(ph, randPerim);
+
+            Asteroid ast = spawnAsteroid(targetSize, spawnPoint);
+
+            // Give random velocity
+            ast.phys.moveVelo = Random.insideUnitCircle.normalized * astSpawnVelocity;
+            ast.phys.spinVelo = Random.Range(-astSpawnSpin, astSpawnSpin);
+        }
+    }
+
+    public static Asteroid spawnAsteroid(int size, Vector2 pos)
+    {
+        // Builds valid asteroid list on demand because I really don't want to mantain a cache
+        List<Asteroid> valid = new List<Asteroid>();
+
+        foreach (Asteroid a in sing.asteroidPrefabs)
+            if (a.size == size)
+                valid.Add(a);
+
+        int rand = Random.Range(0, valid.Count);
+        Asteroid pref = valid[rand];
+
+        Asteroid spawned = Instantiate(pref, pos, Quaternion.identity);
+        spawned.transform.rotation = Quaternion.Euler(0, 0, Random.Range(-180f, 180f));
+
+        return spawned;
+    }
+
+    public static void loopObject(Transform obj)
+    {
+        // Loop the target if they leave the camera
+        float padding = sing.perimPadding;
+
+        Vector2 pPos = obj.position;
         Vector2 bl = Camera.main.ViewportToWorldPoint(Vector2.zero) - new Vector3(padding, padding);
         Vector2 ur = Camera.main.ViewportToWorldPoint(new Vector2(1, 1)) + new Vector3(padding, padding);
         Vector2 dims = ur - bl;
@@ -41,24 +135,18 @@ public class GameManager : MonoBehaviour
         if (pPos.y > ur.y)
             pPos.y -= dims.y;
 
-        player.transform.position = pPos;
+        obj.position = pPos;
     }
 
-    public static Asteroid spawnAsteroid(int size, Vector2 pos)
+    public void onPlayerDeath()
     {
-        // Builds valid asteroid list on demand because I really don't want to mantain a cache
-        List<AsteroidData> valid = new List<AsteroidData>();
+        StartCoroutine(playerDeathCR());
+    }
 
-        foreach (AsteroidData a in sing.asteroidData)
-            if (a.size == size)
-                valid.Add(a);
+    public IEnumerator playerDeathCR()
+    {
+        yield return new WaitForSeconds(1f);
 
-        int rand = Random.Range(0, valid.Count);
-        AsteroidData data = valid[rand];
-
-        Asteroid spawned = Instantiate(sing.asteroidPrefab, pos, Quaternion.identity);
-        spawned.setData(data);
-
-        return spawned;
+        player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
     }
 }
