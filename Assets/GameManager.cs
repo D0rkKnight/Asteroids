@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 
     public Asteroid[] asteroidPrefabs;
     public float[] astSpawnWeights;
-    public int astWeightTarget = 5;
+    public int baseAstWeightTarget = 5;
     public float astSpawnVelocity = 1f;
     public float astSpawnSpin = 20f;
     public float playerSpawnBlockRange = 2f;
@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
     public const string asteroidTag = "Asteroid";
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         if (sing != null)
             throw new System.Exception("GM Singleton broken");
@@ -48,9 +48,10 @@ public class GameManager : MonoBehaviour
 
             Asteroid a = g.GetComponent<Asteroid>();
 
-            totalAstWeight += a.size; // Use something else later
+            totalAstWeight += a.size + 1; // Use something else later
         }
 
+        int astWeightTarget = baseAstWeightTarget + score / 1000;
         if (totalAstWeight < astWeightTarget)
         {
             // Get size
@@ -72,8 +73,7 @@ public class GameManager : MonoBehaviour
             }
 
             // Get random spot on the perimeter
-            Vector2 bl = Camera.main.ViewportToWorldPoint(Vector2.zero) - new Vector3(perimPadding, perimPadding);
-            Vector2 ur = Camera.main.ViewportToWorldPoint(new Vector2(1, 1)) + new Vector3(perimPadding, perimPadding);
+            getGameCorners(out Vector2 bl, out Vector2 ur);
             float pw = ur.x - bl.x;
             float ph = ur.y - bl.y;
             float pRange = (pw + ph) * 2;
@@ -106,6 +106,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public static void getGameCorners(out Vector2 bl, out Vector2 ur)
+    {
+        float padding = sing.perimPadding;
+        bl = Camera.main.ViewportToWorldPoint(Vector2.zero) - new Vector3(padding, padding);
+        ur = Camera.main.ViewportToWorldPoint(new Vector2(1, 1)) + new Vector3(padding, padding);
+    }
+
     public static Asteroid spawnAsteroid(int size, Vector2 pos)
     {
         // Builds valid asteroid list on demand because I really don't want to mantain a cache
@@ -127,11 +134,9 @@ public class GameManager : MonoBehaviour
     public static void loopObject(Transform obj)
     {
         // Loop the target if they leave the camera
-        float padding = sing.perimPadding;
 
         Vector2 pPos = obj.position;
-        Vector2 bl = Camera.main.ViewportToWorldPoint(Vector2.zero) - new Vector3(padding, padding);
-        Vector2 ur = Camera.main.ViewportToWorldPoint(new Vector2(1, 1)) + new Vector3(padding, padding);
+        getGameCorners(out Vector2 bl, out Vector2 ur);
         Vector2 dims = ur - bl;
 
         if (pPos.x < bl.x)

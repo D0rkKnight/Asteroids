@@ -70,8 +70,12 @@ MonoBehaviour:
   moveSpeed: 7
   input: {fileID: 5356658205882211372}
   heldXY: {x: 0, y: 0}
+  firing: 0
+  firerate: 2
+  nextFireTime: 0
   bulletPrefab: {fileID: 8336660168687126281, guid: 88b5e3a7366ee8c47ad826db7d7adaa1, type: 3}
   bulletTravelSpeed: 10
+  invuln: 0
 --- !u!114 &5356658205882211372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -214,7 +218,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: -88579214, guid: 837dad2f981d1ea4fbb4be6481e18e8e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
