@@ -14,8 +14,14 @@ public class Player : MonoBehaviour
     public PlayerInput input;
     public Vector2 heldXY;
 
+    public bool firing = false;
+    public float firerate = 2f;
+    public float nextFireTime = 0f;
+
     public Bullet bulletPrefab;
     public float bulletTravelSpeed = 10f;
+
+    public bool invuln = false;
 
     // Start is called before the first frame update
     void Awake()
@@ -33,6 +39,16 @@ public class Player : MonoBehaviour
 
         // Velo
         phys.moveVelo += (Vector2) (transform.rotation * Vector3.up * Time.deltaTime * moveSpeed * heldXY.y);
+
+        // Firing gun
+        if (firing && Time.time > nextFireTime)
+        {
+            // Instantiate bullet and send it forth
+            Bullet b = Instantiate(bulletPrefab, transform.position, transform.rotation);
+            b.velo = transform.rotation * Vector2.up * bulletTravelSpeed;
+
+            nextFireTime = Time.time + (1f / firerate);
+        }
     }
 
     public void onMoveCall(InputAction.CallbackContext context)
@@ -43,19 +59,27 @@ public class Player : MonoBehaviour
     public void onFireCall(InputAction.CallbackContext context)
     {
         // Filter action type
-        if (!context.performed) return;
-
-        // Instantiate bullet and send it forth
-        Bullet b = Instantiate(bulletPrefab, transform.position, transform.rotation);
-
-        b.velo = transform.rotation * Vector2.up * bulletTravelSpeed;
+        if (context.started)
+            firing = true;
+        if (context.canceled)
+            firing = false;
     }
 
-    public void kill()
+    public void hit()
     {
+        if (invuln)
+            return;
+
         // Boom im dead
         Destroy(gameObject);
 
         GameManager.sing.onPlayerDeath();
+    }
+
+    public IEnumerator invulnFor(float dur)
+    {
+        invuln = true;
+        yield return new WaitForSeconds(dur);
+        invuln = false;
     }
 }

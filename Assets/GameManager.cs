@@ -12,11 +12,15 @@ public class GameManager : MonoBehaviour
     public int astWeightTarget = 5;
     public float astSpawnVelocity = 1f;
     public float astSpawnSpin = 20f;
+    public float playerSpawnBlockRange = 2f;
 
     public float perimPadding = 1;
-
+    public int score = 0;
+    public int lives = 3;
+    public bool gameIsOver = false;
 
     public static GameManager sing;
+    public const string asteroidTag = "Asteroid";
 
     // Start is called before the first frame update
     void Start()
@@ -36,7 +40,7 @@ public class GameManager : MonoBehaviour
         // Count the # of asteroids and spawn more if few are left
         int totalAstWeight = 0;
 
-        GameObject[] asteroids = GameObject.FindGameObjectsWithTag("Asteroid");
+        GameObject[] asteroids = GameObject.FindGameObjectsWithTag(asteroidTag);
         foreach (GameObject g in asteroids)
         {
             // Loop the asteroid
@@ -90,11 +94,15 @@ public class GameManager : MonoBehaviour
 
             spawnPoint.y -= Mathf.Min(ph, randPerim);
 
-            Asteroid ast = spawnAsteroid(targetSize, spawnPoint);
+            // Check point distance from player
+            if (player == null || Vector2.Distance(player.transform.position, spawnPoint) > playerSpawnBlockRange)
+            {
+                Asteroid ast = spawnAsteroid(targetSize, spawnPoint);
 
-            // Give random velocity
-            ast.phys.moveVelo = Random.insideUnitCircle.normalized * astSpawnVelocity;
-            ast.phys.spinVelo = Random.Range(-astSpawnSpin, astSpawnSpin);
+                // Give random velocity
+                ast.phys.moveVelo = Random.insideUnitCircle.normalized * astSpawnVelocity;
+                ast.phys.spinVelo = Random.Range(-astSpawnSpin, astSpawnSpin);
+            }
         }
     }
 
@@ -140,13 +148,43 @@ public class GameManager : MonoBehaviour
 
     public void onPlayerDeath()
     {
-        StartCoroutine(playerDeathCR());
+        lives--;
+
+        if (lives > 0)
+            StartCoroutine(playerDeathCR());
+        else
+            gameOver();
     }
 
     public IEnumerator playerDeathCR()
     {
         yield return new WaitForSeconds(1f);
 
+        respawnPlayer();
+    }
+
+    public void respawnPlayer()
+    {
         player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+        StartCoroutine(player.invulnFor(2f));
+    }
+
+    public void gameOver()
+    {
+        gameIsOver = true;
+    }
+
+    public void restartGame()
+    {
+        lives = 3;
+        score = 0;
+
+        respawnPlayer();
+
+        // Clear every asteroid
+        foreach (GameObject obj in GameObject.FindGameObjectsWithTag(asteroidTag))
+            Destroy(obj);
+
+        gameIsOver = false;
     }
 }

@@ -43,6 +43,9 @@ public class Asteroid : MonoBehaviour
             // Random spin
             child.phys.spinVelo = Random.Range(-splitSpin, splitSpin);
         }
+
+        // Add score!
+        GameManager.sing.score += (size + 1) * 100;
     }
 
     public void OnTriggerEnter2D(Collider2D collision)
@@ -50,6 +53,6 @@ public class Asteroid : MonoBehaviour
         Player player = collision.GetComponent<Player>();
 
         if (player != null)
-            player.kill();
+            player.hit();
     }
 }
