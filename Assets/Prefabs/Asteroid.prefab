@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3460607337448147151}
   - component: {fileID: -1252378641213633093}
   - component: {fileID: 1380799384683824008}
+  - component: {fileID: 2577191589826837035}
   m_Layer: 0
   m_Name: Asteroid
   m_TagString: Asteroid
@@ -51,6 +52,8 @@ MonoBehaviour:
   size: 0
   splitSpeed: 1
   splitSpin: 20
+  naturalSpeed: 1
+  overcapSlowdownRate: 0.4
   phys: {fileID: 0}
 --- !u!212 &1733324736170679256
 SpriteRenderer:
@@ -170,5 +173,15 @@ MonoBehaviour:
   profile: {fileID: 11400000, guid: 47f77c7844fb96f4da4b9bf15cc620d5, type: 2}
   spinVelo: 0
   moveVelo: {x: 0, y: 0}
-  maxSpinVelo: 100
-  maxMoveVelo: 100
+--- !u!114 &2577191589826837035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7980633757052707802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81d9d1405e4563d44b896504ed6c1067, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

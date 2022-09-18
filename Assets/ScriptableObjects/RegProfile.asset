@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: RegProfile
   m_EditorClassIdentifier: 
   linearDrag: 1
-  angularSlowdown: 2
+  angularSlowdown: 3
+  maxSpinVelo: 400
+  maxMoveVelo: 100

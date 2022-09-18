@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   linearDrag: 0
   angularSlowdown: 0
+  maxSpinVelo: 100
+  maxMoveVelo: 3

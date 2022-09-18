@@ -10,7 +10,6 @@ public class GameManager : MonoBehaviour
     public Asteroid[] asteroidPrefabs;
     public float[] astSpawnWeights;
     public int baseAstWeightTarget = 5;
-    public float astSpawnVelocity = 1f;
     public float astSpawnSpin = 20f;
     public float playerSpawnBlockRange = 2f;
 
@@ -100,7 +99,7 @@ public class GameManager : MonoBehaviour
                 Asteroid ast = spawnAsteroid(targetSize, spawnPoint);
 
                 // Give random velocity
-                ast.phys.moveVelo = Random.insideUnitCircle.normalized * astSpawnVelocity;
+                ast.phys.moveVelo = Random.insideUnitCircle.normalized * ast.naturalSpeed;
                 ast.phys.spinVelo = Random.Range(-astSpawnSpin, astSpawnSpin);
             }
         }
@@ -129,6 +128,24 @@ public class GameManager : MonoBehaviour
         spawned.transform.rotation = Quaternion.Euler(0, 0, Random.Range(-180f, 180f));
 
         return spawned;
+    }
+
+    public static void pulseAt(Vector2 pos, float radius, float strength)
+    {
+        Collider2D[] results = new Collider2D[100]; // 100 item cap
+        int collsFound = Physics2D.OverlapCircle(pos, radius, new ContactFilter2D().NoFilter(), results);
+
+        // Push gameobjects away
+        for (int i=0; i<collsFound; i++)
+        {
+            Collider2D coll = results[i];
+            PhysicsObject phys = coll.GetComponent<PhysicsObject>();
+
+            if (phys != null)
+            {
+                phys.moveVelo += strength * ((Vector2)coll.transform.position - pos).normalized;
+            }
+        }
     }
 
     public static void loopObject(Transform obj)

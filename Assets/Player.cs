@@ -32,6 +32,13 @@ public class Player : MonoBehaviour
     public bool dashAvailable = true;
     public float dashCooldown = 3f;
 
+    // Pulse info
+    public float pulseRadius = 2f;
+    public float pulseStrength = 1f;
+    public float pulseCooldown = 5f;
+    public bool pulseAvailable = true;
+    public CircleVisualizer pulseAfterimagePrefab;
+
     // Physics profiles for different states
     public PhysicsProfile regProfile;
     public PhysicsProfile dashProfile;
@@ -69,7 +76,7 @@ public class Player : MonoBehaviour
             // Spin
             int hSign = (int)Mathf.Sign(heldXY.x);
             if (Mathf.Abs(heldXY.x) > 0.01f)
-                phys.spinVelo = Mathf.Lerp(phys.spinVelo, phys.maxSpinVelo * hSign, spinSpeed * Time.deltaTime);
+                phys.spinVelo = Mathf.Lerp(phys.spinVelo, phys.profile.maxSpinVelo * hSign, spinSpeed * Time.deltaTime);
 
             // Velo
             phys.moveVelo += (Vector2)(transform.rotation * Vector3.up * Time.deltaTime * moveSpeed * heldXY.y);
@@ -115,6 +122,17 @@ public class Player : MonoBehaviour
 
         Vector2 dir = transform.rotation * Vector2.up;
         StartCoroutine(dashFor(dashDur, dir, dashSpeed));
+    }
+
+    public void onPulseCall(InputAction.CallbackContext context)
+    {
+        if (!context.performed || !pulseAvailable)
+            return;
+
+        GameManager.pulseAt(transform.position, pulseRadius, pulseStrength);
+
+        CircleVisualizer cViz = Instantiate(pulseAfterimagePrefab, transform.position, Quaternion.identity);
+        cViz.radius = pulseRadius;
     }
 
     public void hit()

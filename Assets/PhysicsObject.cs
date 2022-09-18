@@ -8,8 +8,6 @@ public class PhysicsObject : MonoBehaviour
 
     public float spinVelo;
     public Vector2 moveVelo;
-    public float maxSpinVelo = 100f;
-    public float maxMoveVelo = 100f;
 
     // Start is called before the first frame update
     void Start()
@@ -22,10 +20,10 @@ public class PhysicsObject : MonoBehaviour
     void Update()
     {
         // Limiters
-        if (moveVelo.magnitude > maxMoveVelo)
-            moveVelo *= maxMoveVelo / moveVelo.magnitude;
-        if (Mathf.Abs(spinVelo) > maxSpinVelo)
-            spinVelo *= maxSpinVelo / Mathf.Abs(spinVelo);
+        if (moveVelo.magnitude > profile.maxMoveVelo)
+            moveVelo *= profile.maxMoveVelo / moveVelo.magnitude;
+        if (Mathf.Abs(spinVelo) > profile.maxSpinVelo)
+            spinVelo *= profile.maxSpinVelo / Mathf.Abs(spinVelo);
 
         // Drag
         float drag = Time.deltaTime * profile.linearDrag;

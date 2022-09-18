@@ -8,6 +8,8 @@ public class Asteroid : MonoBehaviour
     public int size; // 0 is smallest
     public float splitSpeed = 1f;
     public float splitSpin = 20f;
+    public float naturalSpeed = 1f;
+    public float overcapSlowdownRate = 1f;
 
     public PhysicsObject phys;
 
@@ -20,7 +22,10 @@ public class Asteroid : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position += (Vector3)phys.moveVelo * Time.deltaTime;
+        if (phys.moveVelo.magnitude > naturalSpeed)
+        {
+            phys.moveVelo = Vector2.Lerp(phys.moveVelo, phys.moveVelo.normalized * naturalSpeed, overcapSlowdownRate * Time.deltaTime);
+        }
 
         GameManager.loopObject(transform);
     }

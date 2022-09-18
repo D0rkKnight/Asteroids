@@ -5,7 +5,6 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public class Afterimage : MonoBehaviour
 {
-
     public SpriteRenderer rend;
     public float fadeRate = 1f;
 
