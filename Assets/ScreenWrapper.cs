@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using System.Reflection;
 
 // Creates clones that screen wrap item and propagate collision messages upstream
 public class ScreenWrapper : MonoBehaviour
 {
     public GameObject[,] ghosts;
+    public UnityEvent<GameObject> onSetupObject;
+    public UnityEvent<Vector2, GameObject> onWrap;
 
     // Start is called before the first frame update
     void Start()
@@ -35,30 +38,15 @@ public class ScreenWrapper : MonoBehaviour
         if (sprRend != null)
             ghost.AddComponent<SpriteRenderer>();
 
-        FieldInfo[] test = typeof(SpriteRenderer).GetFields();
-
         // Copy colliders as well
         foreach (Collider2D col in GetComponents<Collider2D>())
-        {
-            System.Type type = col.GetType();
-            Collider2D newCol = (Collider2D) ghost.AddComponent(type);
-
-            // Copy over fields
-            FieldInfo[] fields = type.GetFields();
-            foreach (FieldInfo f in fields)
-                f.SetValue(newCol, f.GetValue(col));
-
-            // Copy over properties too (this feels really janky...)
-            PropertyInfo[] props = type.GetProperties();
-            foreach (PropertyInfo p in props)
-                if (p.SetMethod != null && p.GetMethod != null)
-                    p.SetValue(newCol, p.GetValue(col));
-        }
+            Utilities.copyComponent(col, ghost);
 
         // Set tag
         ghost.tag = "Untagged";
-
         updateGhost(x, y, ghost);
+
+        onSetupObject.Invoke(ghost);
 
         return ghost;
     }
@@ -87,5 +75,45 @@ public class ScreenWrapper : MonoBehaviour
 
         for (int x = 0; x < 3; x++) for (int y = 0; y < 3; y++) if (ghosts[x, y] != null)
                     updateGhost((x - 1) * dims.x, (y - 1) * dims.y, ghosts[x, y]);
+
+        // Screen wrap
+        Vector2Int dir = loopObject(transform);
+        if (dir.magnitude > 0)
+            onWrap.Invoke(dir, ghosts[dir.x+1, dir.y+1]);
+    }
+    public static Vector2Int loopObject(Transform obj)
+    {
+        // Loop the target if they leave the camera
+
+        Vector2 pPos = obj.position;
+        GameManager.getGameCorners(out Vector2 bl, out Vector2 ur);
+        Vector2 dims = ur - bl;
+
+        Vector2Int dirWrapped = Vector2Int.zero;
+
+        if (pPos.x < bl.x)
+        {
+            pPos.x += dims.x;
+            dirWrapped.x++;
+        }
+        if (pPos.x > ur.x)
+        {
+            pPos.x -= dims.x;
+            dirWrapped.x--;
+        }
+        if (pPos.y < bl.y)
+        {
+            pPos.y += dims.y;
+            dirWrapped.y++;
+        }
+        if (pPos.y > ur.y)
+        {
+            pPos.y -= dims.y;
+            dirWrapped.y--;
+        }
+
+        obj.position = pPos;
+
+        return dirWrapped;
     }
 }

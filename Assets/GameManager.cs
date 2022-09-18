@@ -33,18 +33,12 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (player != null)
-            loopObject(player.transform);
-
         // Count the # of asteroids and spawn more if few are left
         int totalAstWeight = 0;
 
         GameObject[] asteroids = GameObject.FindGameObjectsWithTag(asteroidTag);
         foreach (GameObject g in asteroids)
         {
-            // Loop the asteroid
-            loopObject(g.transform);
-
             Asteroid a = g.GetComponent<Asteroid>();
 
             totalAstWeight += a.size + 1; // Use something else later
@@ -146,26 +140,6 @@ public class GameManager : MonoBehaviour
                 phys.moveVelo += strength * ((Vector2)coll.transform.position - pos).normalized;
             }
         }
-    }
-
-    public static void loopObject(Transform obj)
-    {
-        // Loop the target if they leave the camera
-
-        Vector2 pPos = obj.position;
-        getGameCorners(out Vector2 bl, out Vector2 ur);
-        Vector2 dims = ur - bl;
-
-        if (pPos.x < bl.x)
-            pPos.x += dims.x;
-        if (pPos.x > ur.x)
-            pPos.x -= dims.x;
-        if (pPos.y < bl.y)
-            pPos.y += dims.y;
-        if (pPos.y > ur.y)
-            pPos.y -= dims.y;
-
-        obj.position = pPos;
     }
 
     public void onPlayerDeath()

@@ -45,7 +45,8 @@ GameObject:
   - component: {fileID: 5356658205882211372}
   - component: {fileID: 5356658205882211371}
   - component: {fileID: 5356658205882211369}
-  - component: {fileID: 1878037958}
+  - component: {fileID: 4691264287635753764}
+  - component: {fileID: 623600234537325250}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -114,7 +115,7 @@ MonoBehaviour:
   dashAvailable: 1
   dashCooldown: 3
   pulseRadius: 3
-  pulseStrength: 1
+  pulseStrength: 2
   pulseCooldown: 5
   pulseAvailable: 1
   pulseAfterimagePrefab: {fileID: 4671719463641220823, guid: 25cf89511870dc54e9f2950ce04024b8, type: 3}
@@ -123,6 +124,7 @@ MonoBehaviour:
   invuln: 0
   afterimagePrefab: {fileID: 4325278215823363834, guid: 2107751677da3df4c9400f412393c557, type: 3}
   noseTrans: {fileID: 6112745714483011567}
+  trail: {fileID: 3118964230771698026}
 --- !u!114 &5356658205882211372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -369,7 +371,7 @@ PolygonCollider2D:
       - {x: -0.39249998, y: -0.53}
       - {x: -0.2875, y: -0.475}
       - {x: -0.2775, y: -0.465}
---- !u!114 &1878037958
+--- !u!114 &4691264287635753764
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -381,6 +383,57 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81d9d1405e4563d44b896504ed6c1067, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onSetupObject:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5356658205882211374}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+        m_MethodName: onSetupGhostCall
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onWrap:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5356658205882211374}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+        m_MethodName: onWrapCall
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!50 &623600234537325250
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5356658205882211375}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &8840761210806334048
 GameObject:
   m_ObjectHideFlags: 0

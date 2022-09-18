@@ -26,8 +26,6 @@ public class Asteroid : MonoBehaviour
         {
             phys.moveVelo = Vector2.Lerp(phys.moveVelo, phys.moveVelo.normalized * naturalSpeed, overcapSlowdownRate * Time.deltaTime);
         }
-
-        GameManager.loopObject(transform);
     }
 
     public void kill()

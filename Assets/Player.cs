@@ -49,6 +49,7 @@ public class Player : MonoBehaviour
 
     // Object links
     public Transform noseTrans;
+    public TrailRenderer trail;
 
     // Start is called before the first frame update
     void Awake()
@@ -133,6 +134,34 @@ public class Player : MonoBehaviour
 
         CircleVisualizer cViz = Instantiate(pulseAfterimagePrefab, transform.position, Quaternion.identity);
         cViz.radius = pulseRadius;
+    }
+
+    // TODO: Write custom trail renderer that isn't so unstable
+    public void onSetupGhostCall(GameObject ghost)
+    {
+        // Copy over trail
+        // Utilities.copyComponent(trail, ghost);
+    }
+
+    public void onWrapCall(Vector2 dir, GameObject ghost)
+    {
+        /*// Swap trail vertices from ghost
+        TrailRenderer ghostTrail = ghost.GetComponent<TrailRenderer>();
+
+        Vector3[] ghostVerts = new Vector3[ghostTrail.positionCount+1];
+        Vector3[] baseVerts = new Vector3[trail.positionCount+1];
+
+        if (ghostVerts.Length != baseVerts.Length)
+            throw new System.Exception("Trail ghost desync between " + ghostVerts.Length + " and " + baseVerts.Length);
+
+        ghostTrail.GetPositions(ghostVerts);
+        trail.GetPositions(baseVerts);
+
+        ghostTrail.Clear();
+        trail.Clear();
+
+        ghostTrail.AddPositions(baseVerts);
+        trail.AddPositions(ghostVerts);*/
     }
 
     public void hit()
