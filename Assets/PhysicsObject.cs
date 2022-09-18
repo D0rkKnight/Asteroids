@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class PhysicsObject : MonoBehaviour
 {
-    public float linearDrag = 1f;
-    public float angularSlowdown = 1f;
+    public PhysicsProfile profile;
 
     public float spinVelo;
     public Vector2 moveVelo;
@@ -15,7 +14,8 @@ public class PhysicsObject : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        if (profile == null)
+            profile = ScriptableObject.CreateInstance<PhysicsProfile>();
     }
 
     // Update is called once per frame
@@ -28,11 +28,11 @@ public class PhysicsObject : MonoBehaviour
             spinVelo *= maxSpinVelo / Mathf.Abs(spinVelo);
 
         // Drag
-        float drag = Time.deltaTime * linearDrag;
+        float drag = Time.deltaTime * profile.linearDrag;
         drag = Mathf.Min(drag, Mathf.Abs(moveVelo.magnitude));
         moveVelo -= moveVelo.normalized * drag;
 
-        spinVelo = Mathf.Lerp(spinVelo, 0, angularSlowdown * Time.deltaTime);
+        spinVelo = Mathf.Lerp(spinVelo, 0, profile.angularSlowdown * Time.deltaTime);
 
         // Apply velocities
         transform.Rotate(Vector3.back, Time.deltaTime * spinVelo);

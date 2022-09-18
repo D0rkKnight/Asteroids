@@ -48,8 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c44517cefad435548bdf21d110983e01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  linearDrag: 1
-  angularSlowdown: 1
+  profile: {fileID: 0}
   spinVelo: 0
   moveVelo: {x: 0, y: 0}
   maxSpinVelo: 300
@@ -76,6 +75,13 @@ MonoBehaviour:
   bulletPrefab: {fileID: 8336660168687126281, guid: 88b5e3a7366ee8c47ad826db7d7adaa1, type: 3}
   bulletTravelSpeed: 10
   invuln: 0
+  dashDur: 0.3
+  dashSpeed: 10
+  postDashSpeed: 4
+  dashing: 0
+  regProfile: {fileID: 11400000, guid: d6847b38fa1edc442ba2006e55f47406, type: 2}
+  dashProfile: {fileID: 11400000, guid: 51fc5eb71acf7734d85c300dc809ff05, type: 2}
+  afterimagePrefab: {fileID: 4325278215823363834, guid: 2107751677da3df4c9400f412393c557, type: 3}
 --- !u!114 &5356658205882211372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,6 +179,22 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: a9d12855-5c46-40f1-9d56-9f448720aedb
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5356658205882211374}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+        m_MethodName: onDashCall
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: cc594969-76ca-4b59-b678-ee48181c0408
+    m_ActionName: Player/Dash[/Keyboard/shift]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

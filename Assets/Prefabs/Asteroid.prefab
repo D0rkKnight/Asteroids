@@ -167,8 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c44517cefad435548bdf21d110983e01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  linearDrag: 0
-  angularSlowdown: 0
+  profile: {fileID: 11400000, guid: 47f77c7844fb96f4da4b9bf15cc620d5, type: 2}
   spinVelo: 0
   moveVelo: {x: 0, y: 0}
   maxSpinVelo: 100
