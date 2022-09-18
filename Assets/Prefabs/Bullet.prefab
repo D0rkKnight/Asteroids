@@ -52,6 +52,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   velo: {x: 0, y: 0}
   destroyed: 0
+  life: 3
 --- !u!212 &8336660168687126278
 SpriteRenderer:
   m_ObjectHideFlags: 0

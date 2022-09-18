@@ -8,6 +8,8 @@ public class Bullet : MonoBehaviour
     public Vector2 velo;
     public bool destroyed = false; // Tag for same frame collisions
 
+    public float life = 3f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -15,6 +17,9 @@ public class Bullet : MonoBehaviour
 
         int rand = Random.Range(0, resolver.GetCategory().Length);
         resolver.SetCategoryAndLabel(resolver.GetCategory(), rand + "");
+
+        // Queue destruction
+        Destroy(gameObject, life);
     }
 
     // Update is called once per frame
