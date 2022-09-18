@@ -55,7 +55,7 @@ public class Asteroid : MonoBehaviour
     {
         Player player = collision.GetComponentInParent<Player>();
 
-        if (player != null)
+        if (player != null && !player.destroyed)
             player.hit();
     }
 }

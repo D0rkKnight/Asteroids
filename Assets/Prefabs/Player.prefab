@@ -122,6 +122,7 @@ MonoBehaviour:
   regProfile: {fileID: 11400000, guid: d6847b38fa1edc442ba2006e55f47406, type: 2}
   dashProfile: {fileID: 11400000, guid: 51fc5eb71acf7734d85c300dc809ff05, type: 2}
   invuln: 0
+  destroyed: 0
   afterimagePrefab: {fileID: 4325278215823363834, guid: 2107751677da3df4c9400f412393c557, type: 3}
   noseTrans: {fileID: 6112745714483011567}
   trail: {fileID: 3118964230771698026}
@@ -451,7 +452,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5922195915335054227
 Transform:
   m_ObjectHideFlags: 0

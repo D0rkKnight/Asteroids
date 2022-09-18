@@ -44,6 +44,7 @@ public class Player : MonoBehaviour
     public PhysicsProfile dashProfile;
 
     public bool invuln = false;
+    public bool destroyed = false;
 
     public Afterimage afterimagePrefab;
 
@@ -171,6 +172,7 @@ public class Player : MonoBehaviour
 
         // Boom im dead
         Destroy(gameObject);
+        destroyed = true;
 
         GameManager.sing.onPlayerDeath();
     }
