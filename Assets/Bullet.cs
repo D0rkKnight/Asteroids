@@ -35,8 +35,8 @@ public class Bullet : MonoBehaviour
         if (destroyed)
             return;
 
-        // Asteroid check
-        Asteroid ast = collision.GetComponent<Asteroid>();
+        // Asteroid check (might've hit a wrap ghost)
+        Asteroid ast = collision.GetComponentInParent<Asteroid>();
 
         if (ast != null)
         {
