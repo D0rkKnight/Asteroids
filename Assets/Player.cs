@@ -14,14 +14,14 @@ public class Player : MonoBehaviour
     public PlayerInput input;
     public Vector2 heldXY;
 
+    // Bullets
     public bool firing = false;
     public float firerate = 2f;
     public float nextFireTime = 0f;
 
     public Bullet bulletPrefab;
     public float bulletTravelSpeed = 10f;
-
-    public bool invuln = false;
+    public float recoil = 1f;
 
     // Dash info
     public float dashDur = 0.5f;
@@ -36,7 +36,12 @@ public class Player : MonoBehaviour
     public PhysicsProfile regProfile;
     public PhysicsProfile dashProfile;
 
+    public bool invuln = false;
+
     public Afterimage afterimagePrefab;
+
+    // Object links
+    public Transform noseTrans;
 
     // Start is called before the first frame update
     void Awake()
@@ -74,8 +79,16 @@ public class Player : MonoBehaviour
         if (firing && Time.time > nextFireTime)
         {
             // Instantiate bullet and send it forth
-            Bullet b = Instantiate(bulletPrefab, transform.position, transform.rotation);
-            b.velo = transform.rotation * Vector2.up * bulletTravelSpeed;
+            Bullet b = Instantiate(bulletPrefab, noseTrans.position, transform.rotation);
+
+            // Bullet velocity also contains spin of the nose
+            float tangentSpeed = 2 * (noseTrans.position - transform.position).magnitude * Mathf.Sin(phys.spinVelo / 2); // Signed
+            Vector2 spin = transform.rotation * Vector2.right * tangentSpeed;
+
+            b.velo = transform.rotation * Vector2.up * bulletTravelSpeed + (Vector3) spin;
+
+            // Recoil
+            phys.moveVelo -= (Vector2) (transform.rotation * Vector2.up * recoil);
 
             nextFireTime = Time.time + (1f / firerate);
         }

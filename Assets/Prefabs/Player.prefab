@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2486638223963640824
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6112745714483011567}
+  m_Layer: 0
+  m_Name: Nose
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6112745714483011567
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2486638223963640824}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.508, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5356658205882211373}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5356658205882211375
 GameObject:
   m_ObjectHideFlags: 0
@@ -32,7 +63,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 6112745714483011567}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -65,7 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba996eae9f6d514bbdf49ec35702fc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spinSpeed: 3
+  spinSpeed: 5
   moveSpeed: 7
   input: {fileID: 5356658205882211372}
   heldXY: {x: 0, y: 0}
@@ -74,14 +106,18 @@ MonoBehaviour:
   nextFireTime: 0
   bulletPrefab: {fileID: 8336660168687126281, guid: 88b5e3a7366ee8c47ad826db7d7adaa1, type: 3}
   bulletTravelSpeed: 10
-  invuln: 0
+  recoil: 1
   dashDur: 0.3
   dashSpeed: 10
   postDashSpeed: 4
   dashing: 0
+  dashAvailable: 1
+  dashCooldown: 3
   regProfile: {fileID: 11400000, guid: d6847b38fa1edc442ba2006e55f47406, type: 2}
   dashProfile: {fileID: 11400000, guid: 51fc5eb71acf7734d85c300dc809ff05, type: 2}
+  invuln: 0
   afterimagePrefab: {fileID: 4325278215823363834, guid: 2107751677da3df4c9400f412393c557, type: 3}
+  noseTrans: {fileID: 6112745714483011567}
 --- !u!114 &5356658205882211372
 MonoBehaviour:
   m_ObjectHideFlags: 0
