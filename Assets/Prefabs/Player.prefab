@@ -98,8 +98,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba996eae9f6d514bbdf49ec35702fc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spinSpeed: 5
-  moveSpeed: 7
+  spinAccel: 4
+  moveAccel: 7
+  spinBreakFactor: 3
+  moveBreakFactor: 2.5
   input: {fileID: 5356658205882211372}
   heldXY: {x: 0, y: 0}
   firing: 0
@@ -114,11 +116,18 @@ MonoBehaviour:
   dashing: 0
   dashAvailable: 1
   dashCooldown: 3
+  dashSlowdownAndEDI: 1
+  floatingDashCD: 0
   pulseRadius: 3
   pulseStrength: 2
   pulseCooldown: 5
   pulseAvailable: 1
   pulseAfterimagePrefab: {fileID: 4671719463641220823, guid: 25cf89511870dc54e9f2950ce04024b8, type: 3}
+  hyperSpeed: 10
+  hyperPrewindow: 0.5
+  hyperPostwindow: 0.2
+  hyperAble: 0
+  hyperCooldown: 0.5
   regProfile: {fileID: 11400000, guid: d6847b38fa1edc442ba2006e55f47406, type: 2}
   dashProfile: {fileID: 11400000, guid: 51fc5eb71acf7734d85c300dc809ff05, type: 2}
   invuln: 0

@@ -6,8 +6,11 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PhysicsObject))]
 public class Player : MonoBehaviour
 {
-    public float spinSpeed = 1f;
-    public float moveSpeed = 1f;
+    public float spinAccel = 1f;
+    public float moveAccel = 1f;
+
+    public float spinBreakFactor = 1.2f;
+    public float moveBreakFactor = 1.5f;
 
     private PhysicsObject phys;
 
@@ -31,6 +34,8 @@ public class Player : MonoBehaviour
 
     public bool dashAvailable = true;
     public float dashCooldown = 3f;
+    public bool dashSlowdownAndEDI = true;
+    public float floatingDashCD;
 
     // Pulse info
     public float pulseRadius = 2f;
@@ -38,6 +43,13 @@ public class Player : MonoBehaviour
     public float pulseCooldown = 5f;
     public bool pulseAvailable = true;
     public CircleVisualizer pulseAfterimagePrefab;
+
+    // Hyperdashes
+    public float hyperSpeed = 15f;
+    public float hyperPrewindow = 0.1f;
+    public float hyperPostwindow = 0.02f;
+    public bool hyperAble = false;
+    public float hyperCooldown = 0.5f;
 
     // Physics profiles for different states
     public PhysicsProfile regProfile;
@@ -61,6 +73,7 @@ public class Player : MonoBehaviour
     private void Start()
     {
         phys.profile = regProfile;
+        floatingDashCD = dashCooldown;
     }
 
     // Update is called once per frame
@@ -78,10 +91,28 @@ public class Player : MonoBehaviour
             // Spin
             int hSign = (int)Mathf.Sign(heldXY.x);
             if (Mathf.Abs(heldXY.x) > 0.01f)
-                phys.spinVelo = Mathf.Lerp(phys.spinVelo, phys.profile.maxSpinVelo * hSign, spinSpeed * Time.deltaTime);
+                phys.spinVelo = Mathf.Lerp(phys.spinVelo, phys.profile.maxSpinVelo * hSign, spinAccel * Time.deltaTime);
 
             // Velo
-            phys.moveVelo += (Vector2)(transform.rotation * Vector3.up * Time.deltaTime * moveSpeed * heldXY.y);
+            Vector2 accelApplied = transform.rotation * Vector3.up * moveAccel * heldXY.y;
+
+            // Account for breaking if existing motion
+            if (phys.moveVelo.magnitude > 0.01f)
+            {
+                float parAxisMag = Vector2.Dot(accelApplied, phys.moveVelo.normalized);
+                Vector2 parallel = parAxisMag * phys.moveVelo.normalized;
+                Vector2 perp = accelApplied - parallel;
+
+                if (parAxisMag < 0)
+                    phys.moveVelo += parallel * moveBreakFactor * Time.deltaTime;
+                else
+                    phys.moveVelo += parallel * Time.deltaTime;
+                phys.moveVelo += perp * Time.deltaTime;
+            }
+
+            // For moving from rest
+            else
+                phys.moveVelo += accelApplied * Time.deltaTime;
         }
 
         // Firing gun
@@ -135,6 +166,26 @@ public class Player : MonoBehaviour
 
         CircleVisualizer cViz = Instantiate(pulseAfterimagePrefab, transform.position, Quaternion.identity);
         cViz.radius = pulseRadius;
+
+        float floatingPulseCD = pulseCooldown;
+
+        // Perform a hyper if available
+        if (hyperAble)
+        {
+            Vector2 hyperSum = (phys.moveVelo.normalized + heldXY * 1.2f);
+            Vector2 hyperDir = hyperSum;
+            if (hyperDir.magnitude > 1)
+                hyperDir = hyperDir.normalized; // Constrain to unit circle
+
+            phys.moveVelo = hyperSpeed * hyperDir;
+            dashSlowdownAndEDI = false;
+
+            // Change cooldown times
+            floatingDashCD = hyperCooldown;
+            floatingPulseCD = hyperCooldown;
+        }
+
+        StartCoroutine(startPulseCooldown(floatingPulseCD));
     }
 
     // TODO: Write custom trail renderer that isn't so unstable
@@ -187,6 +238,7 @@ public class Player : MonoBehaviour
     public IEnumerator dashFor(float dur, Vector2 dir, float speed)
     {
         dashing = true;
+
         phys.profile = dashProfile;
         phys.spinVelo = 0;
 
@@ -204,17 +256,27 @@ public class Player : MonoBehaviour
         float redirWind = Mathf.Min(0.05f, dur);
         StartCoroutine(openRedirWindow(redirWind, speed));
 
-        yield return new WaitForSeconds(dur);
-        dashing = false;
+        yield return new WaitForSeconds(dur - hyperPrewindow);
 
+        StartCoroutine(openHyperWindow(hyperPrewindow + hyperPostwindow));
+
+        yield return new WaitForSeconds(hyperPrewindow);
+
+        // Swap profile
         phys.profile = regProfile;
-        phys.moveVelo *= postDashSpeed / phys.moveVelo.magnitude;
 
-        // DI on dash exit
-        phys.moveVelo += phys.moveVelo.normalized * heldXY.y * 1;
+        if (dashSlowdownAndEDI)
+        {
+            phys.moveVelo *= postDashSpeed / phys.moveVelo.magnitude;
 
-        // Start cooldown
-        StartCoroutine(startDashCooldown(dashCooldown));
+            // DI on dash exit
+            phys.moveVelo += phys.moveVelo.normalized * heldXY.y * 1;
+        }
+        dashSlowdownAndEDI = true; // Default to having this
+
+        // Exit dash
+        dashing = false;
+        StartCoroutine(startDashCooldown(floatingDashCD));
     }
 
     public IEnumerator openRedirWindow(float dur, float speed)
@@ -231,11 +293,27 @@ public class Player : MonoBehaviour
         }
     }
 
+    public IEnumerator openHyperWindow(float dur)
+    {
+        hyperAble = true;
+        yield return new WaitForSeconds(dur);
+        hyperAble = false;
+    }
+
     public IEnumerator startDashCooldown(float dur)
     {
         dashAvailable = false;
         yield return new WaitForSeconds(dur);
         dashAvailable = true;
+
+        floatingDashCD = dashCooldown; // Return floating value to normal
+    }
+
+    public IEnumerator startPulseCooldown(float dur)
+    {
+        pulseAvailable = false;
+        yield return new WaitForSeconds(dur);
+        pulseAvailable = true;
     }
 
     public IEnumerator spawnAfterImages(float dur, int iterations)
