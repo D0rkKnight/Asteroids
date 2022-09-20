@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(PhysicsObject))]
-public class Asteroid : MonoBehaviour
+public class Asteroid : MonoBehaviour, GhostCollidable
 {
     public int size; // 0 is smallest
     public float splitSpeed = 1f;
@@ -51,9 +51,9 @@ public class Asteroid : MonoBehaviour
         GameManager.sing.score += (size + 1) * 100;
     }
 
-    public void OnTriggerEnter2D(Collider2D collision)
+    public void OnGhostCollision(GameObject collision)
     {
-        Player player = collision.GetComponentInParent<Player>();
+        Player player = collision.GetComponent<Player>();
 
         if (player != null && !player.destroyed)
             player.hit();

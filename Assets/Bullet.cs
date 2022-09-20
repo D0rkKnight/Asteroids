@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D.Animation;
 
-public class Bullet : MonoBehaviour
+public class Bullet : MonoBehaviour, GhostCollidable
 {
     public Vector2 velo;
     public bool destroyed = false; // Tag for same frame collisions
@@ -34,14 +34,14 @@ public class Bullet : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void OnTriggerEnter2D(Collider2D collision)
+    public void OnGhostCollision(GameObject obj)
     {
         // If this thing is already dead skip (for same frame collisions)
         if (destroyed)
             return;
 
         // Asteroid check (might've hit a wrap ghost)
-        Asteroid ast = collision.GetComponentInParent<Asteroid>();
+        Asteroid ast = obj.GetComponent<Asteroid>();
 
         if (ast != null)
         {

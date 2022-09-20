@@ -10,6 +10,7 @@ public class ScreenWrapper : MonoBehaviour
     public GameObject[,] ghosts;
     public UnityEvent<GameObject> onSetupObject;
     public UnityEvent<Vector2, GameObject> onWrap;
+    public UnityEvent<GameObject> onCollision; // Handles both ghost and core collisions
 
     // Start is called before the first frame update
     void Start()
@@ -24,19 +25,26 @@ public class ScreenWrapper : MonoBehaviour
                 if (x == 1 && y == 1)
                     continue;
 
-                ghosts[x, y] = genGhost((x-1) * dims.x, (y-1) * dims.y, "Ghost_"+x+y);
+                ghosts[x, y] = genGhost((x - 1) * dims.x, (y - 1) * dims.y, "Ghost_" + x + y);
             }
+
+        // Collect collision events from elsewhere
+        foreach (GhostCollidable collTarget in GetComponents<GhostCollidable>())
+            onCollision.AddListener(collTarget.OnGhostCollision);
     }
 
     private GameObject genGhost(float x, float y, string name)
     {
         GameObject ghost = new GameObject(name);
-        ghost.transform.parent = transform;
+        ghost.transform.parent = GameManager.sing.transform.Find("Ghosts");
 
         // Build components
-        SpriteRenderer sprRend = GetComponent<SpriteRenderer>(); 
+        SpriteRenderer sprRend = GetComponent<SpriteRenderer>();
         if (sprRend != null)
             ghost.AddComponent<SpriteRenderer>();
+
+        WrapGhost wr = ghost.AddComponent<WrapGhost>();
+        wr.parent = this;
 
         // Copy colliders as well
         foreach (Collider2D col in GetComponents<Collider2D>())
@@ -79,8 +87,9 @@ public class ScreenWrapper : MonoBehaviour
         // Screen wrap
         Vector2Int dir = loopObject(transform);
         if (dir.magnitude > 0)
-            onWrap.Invoke(dir, ghosts[dir.x+1, dir.y+1]);
+            onWrap.Invoke(dir, ghosts[dir.x + 1, dir.y + 1]);
     }
+
     public static Vector2Int loopObject(Transform obj)
     {
         // Loop the target if they leave the camera
@@ -115,5 +124,25 @@ public class ScreenWrapper : MonoBehaviour
         obj.position = pPos;
 
         return dirWrapped;
+    }
+
+    private void OnDestroy()
+    {
+        foreach (GameObject g in ghosts)
+            Destroy(g);
+    }
+
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        onCollision.Invoke(tryGetTrueObject(collision.gameObject));
+    }
+
+    public static GameObject tryGetTrueObject(GameObject obj)
+    {
+        WrapGhost ghost = obj.GetComponent<WrapGhost>();
+        if (ghost != null)
+            return obj.gameObject;
+
+        return obj;
     }
 }
