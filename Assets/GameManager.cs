@@ -87,10 +87,21 @@ public class GameManager : MonoBehaviour
 
             spawnPoint.y -= Mathf.Min(ph, randPerim);
 
-            // Check point distance from player
-            if (player == null || Vector2.Distance(player.transform.position, spawnPoint) > playerSpawnBlockRange)
+            // Prevent asteroid from spawning on top of player
+            bool astValid = true;
+            if (player != null) {
+                astValid = astValid && Vector2.Distance(player.transform.position, spawnPoint) > playerSpawnBlockRange;
+                foreach (GameObject ghost in player.GetComponent<ScreenWrapper>().ghosts)
+                    if (ghost != null)
+                        astValid = astValid && Vector2.Distance(ghost.transform.position, spawnPoint) > playerSpawnBlockRange;
+            }
+
+            if (astValid)
             {
-                Asteroid ast = spawnAsteroid(targetSize, spawnPoint);
+                Vector2 spawnVelo = Quaternion.Euler(0, 0, Random.Range(-30, 30)) * -spawnPoint.normalized;
+                Vector2 exterpSP = spawnPoint + -spawnVelo * 3;
+
+                Asteroid ast = spawnAsteroid(targetSize, exterpSP);
 
                 // Give random velocity
                 ast.phys.moveVelo = Random.insideUnitCircle.normalized * ast.naturalSpeed;
@@ -120,6 +131,7 @@ public class GameManager : MonoBehaviour
 
         Asteroid spawned = Instantiate(pref, pos, Quaternion.identity);
         spawned.transform.rotation = Quaternion.Euler(0, 0, Random.Range(-180f, 180f));
+        spawned.GetComponent<ScreenWrapper>().loopable = false;
 
         return spawned;
     }

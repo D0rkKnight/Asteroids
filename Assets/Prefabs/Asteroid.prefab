@@ -185,3 +185,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81d9d1405e4563d44b896504ed6c1067, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onSetupObject:
+    m_PersistentCalls:
+      m_Calls: []
+  onWrap:
+    m_PersistentCalls:
+      m_Calls: []
+  onCollision:
+    m_PersistentCalls:
+      m_Calls: []
+  loopable: 1

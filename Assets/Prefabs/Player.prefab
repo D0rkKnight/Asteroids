@@ -110,8 +110,8 @@ MonoBehaviour:
   bulletPrefab: {fileID: 8336660168687126281, guid: 88b5e3a7366ee8c47ad826db7d7adaa1, type: 3}
   bulletTravelSpeed: 10
   recoil: 1
-  dashDur: 0.3
-  dashSpeed: 10
+  dashDur: 0.2
+  dashSpeed: 15
   postDashSpeed: 4
   dashing: 0
   dashAvailable: 1
@@ -124,7 +124,7 @@ MonoBehaviour:
   pulseAvailable: 1
   pulseAfterimagePrefab: {fileID: 4671719463641220823, guid: 25cf89511870dc54e9f2950ce04024b8, type: 3}
   hyperSpeed: 10
-  hyperPrewindow: 0.5
+  hyperPrewindow: 0.2
   hyperPostwindow: 0.2
   hyperAble: 0
   hyperCooldown: 0.5
@@ -413,6 +413,10 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  onCollision:
+    m_PersistentCalls:
+      m_Calls: []
+  loopable: 1
 --- !u!1 &8840761210806334048
 GameObject:
   m_ObjectHideFlags: 0

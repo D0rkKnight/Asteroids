@@ -26,6 +26,22 @@ public class Asteroid : MonoBehaviour, GhostCollidable
         {
             phys.moveVelo = Vector2.Lerp(phys.moveVelo, phys.moveVelo.normalized * naturalSpeed, overcapSlowdownRate * Time.deltaTime);
         }
+
+        // TODO: Might want the gamemanager handling this behavior
+        // Activate looping on full screen entry
+        SpriteRenderer sprRend = GetComponent<SpriteRenderer>();
+        ScreenWrapper wrapper = sprRend.GetComponent<ScreenWrapper>();
+
+        GameManager.getGameCorners(out Vector2 bl, out Vector2 ur);
+        Bounds screenBounds = new Bounds((bl+ur)/2, (Vector3) (ur-bl) + new Vector3(0, 0, 1000));
+
+        if (screenBounds.Contains(sprRend.bounds.min) && screenBounds.Contains(sprRend.bounds.max) &&
+            !wrapper.loopable)
+            wrapper.activateWrapper();
+
+        // Destroy self if too far from edge (might struggle with large objects)
+        if (screenBounds.SqrDistance(transform.position) > 10)
+            Destroy(gameObject);
     }
 
     public void kill()

@@ -12,25 +12,19 @@ public class ScreenWrapper : MonoBehaviour
     public UnityEvent<Vector2, GameObject> onWrap;
     public UnityEvent<GameObject> onCollision; // Handles both ghost and core collisions
 
+    public bool loopable = true; // Toggles whether the screen wrapper is wrapping items
+
     // Start is called before the first frame update
     void Start()
     {
         ghosts = new GameObject[3, 3];
 
-        GameManager.getGameCorners(out Vector2 bl, out Vector2 ur);
-        Vector2 dims = ur - bl;
-
-        for (int x = 0; x < 3; x++) for (int y = 0; y < 3; y++)
-            {
-                if (x == 1 && y == 1)
-                    continue;
-
-                ghosts[x, y] = genGhost((x - 1) * dims.x, (y - 1) * dims.y, "Ghost_" + x + y);
-            }
-
         // Collect collision events from elsewhere
         foreach (GhostCollidable collTarget in GetComponents<GhostCollidable>())
             onCollision.AddListener(collTarget.OnGhostCollision);
+
+        if (loopable)
+            initWrapper();
     }
 
     private GameObject genGhost(float x, float y, string name)
@@ -85,9 +79,12 @@ public class ScreenWrapper : MonoBehaviour
                     updateGhost((x - 1) * dims.x, (y - 1) * dims.y, ghosts[x, y]);
 
         // Screen wrap
-        Vector2Int dir = loopObject(transform);
-        if (dir.magnitude > 0)
-            onWrap.Invoke(dir, ghosts[dir.x + 1, dir.y + 1]);
+        if (loopable)
+        {
+            Vector2Int dir = loopObject(transform);
+            if (dir.magnitude > 0)
+                onWrap.Invoke(dir, ghosts[dir.x + 1, dir.y + 1]);
+        }
     }
 
     public static Vector2Int loopObject(Transform obj)
@@ -144,5 +141,29 @@ public class ScreenWrapper : MonoBehaviour
             return obj.gameObject;
 
         return obj;
+    }
+
+    // 1 way switch
+    public void activateWrapper()
+    {
+        if (!loopable)
+        {
+            loopable = true;
+            initWrapper();
+        }
+    }
+
+    public void initWrapper()
+    {
+        GameManager.getGameCorners(out Vector2 bl, out Vector2 ur);
+        Vector2 dims = ur - bl;
+
+        for (int x = 0; x < 3; x++) for (int y = 0; y < 3; y++)
+            {
+                if (x == 1 && y == 1)
+                    continue;
+
+                ghosts[x, y] = genGhost((x - 1) * dims.x, (y - 1) * dims.y, "Ghost_" + x + y);
+            }
     }
 }

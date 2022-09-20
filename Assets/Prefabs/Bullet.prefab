@@ -189,3 +189,7 @@ MonoBehaviour:
   onWrap:
     m_PersistentCalls:
       m_Calls: []
+  onCollision:
+    m_PersistentCalls:
+      m_Calls: []
+  loopable: 0
