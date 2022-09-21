@@ -63,11 +63,13 @@ public class Player : MonoBehaviour
     // Object links
     public Transform noseTrans;
     public TrailRenderer trail;
+    public RendererController rendCtrl;
 
     // Start is called before the first frame update
     void Awake()
     {
         phys = GetComponent<PhysicsObject>();
+        rendCtrl = GetComponent<RendererController>();
     }
 
     private void Start()
@@ -230,6 +232,9 @@ public class Player : MonoBehaviour
 
     public IEnumerator invulnFor(float dur)
     {
+        // Begin flickering
+        rendCtrl.flicker(dur);
+
         invuln = true;
         yield return new WaitForSeconds(dur);
         invuln = false;

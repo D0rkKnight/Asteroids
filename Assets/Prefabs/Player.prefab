@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 5356658205882211369}
   - component: {fileID: 623600234537325250}
   - component: {fileID: 4691264287635753764}
+  - component: {fileID: 1878037960}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -135,6 +136,7 @@ MonoBehaviour:
   afterimagePrefab: {fileID: 4325278215823363834, guid: 2107751677da3df4c9400f412393c557, type: 3}
   noseTrans: {fileID: 6112745714483011567}
   trail: {fileID: 3118964230771698026}
+  rendCtrl: {fileID: 0}
 --- !u!114 &5356658205882211372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -417,6 +419,22 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   loopable: 1
+--- !u!114 &1878037960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5356658205882211375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39aed1d42256d0448ae32dae383b8f2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseCol: {r: 1, g: 1, b: 1, a: 1}
+  flicker1: {r: 1, g: 1, b: 1, a: 1}
+  flicker2: {r: 1, g: 1, b: 1, a: 0.49803922}
+  flickerInterval: 0.2
 --- !u!1 &8840761210806334048
 GameObject:
   m_ObjectHideFlags: 0
