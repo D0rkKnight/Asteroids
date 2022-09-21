@@ -12,6 +12,9 @@ public class Player : MonoBehaviour
     public float spinBreakFactor = 1.2f;
     public float moveBreakFactor = 1.5f;
 
+    public float floatingSpinInput = 0f;
+    public float spinAccelRampFactor = 3f;
+
     private PhysicsObject phys;
 
     public PlayerInput input;
@@ -44,6 +47,7 @@ public class Player : MonoBehaviour
 
     // Parries
     public float parryRadius = 0.5f;
+    public float dashingParryRadius = 1.5f;
 
     // Hyperdashes
     public float hyperSpeed = 15f;
@@ -91,9 +95,16 @@ public class Player : MonoBehaviour
             // Regular movement
 
             // Spin
+            floatingSpinInput = Mathf.Lerp(floatingSpinInput, Mathf.Abs(heldXY.x), Time.deltaTime * spinAccelRampFactor);
+            if (Mathf.Abs(heldXY.x) < 0.01f)
+                floatingSpinInput = 0; // Reset accel on taps
+
             int hSign = (int)Mathf.Sign(heldXY.x);
             if (Mathf.Abs(heldXY.x) > 0.01f)
-                phys.spinVelo = Mathf.Lerp(phys.spinVelo, phys.profile.maxSpinVelo * hSign, spinAccel * Time.deltaTime);
+            {
+                phys.spinVelo = Mathf.Lerp(phys.spinVelo, phys.profile.maxSpinVelo * hSign, 
+                    floatingSpinInput * spinAccel * Time.deltaTime);
+            }
 
             // Velo
             Vector2 accelApplied = transform.rotation * Vector3.up * moveAccel * heldXY.y;
@@ -127,7 +138,7 @@ public class Player : MonoBehaviour
             float tangentSpeed = 2 * (noseTrans.position - transform.position).magnitude * Mathf.Sin(phys.spinVelo / 2); // Signed
             Vector2 spin = transform.rotation * Vector2.right * tangentSpeed;
 
-            b.velo = transform.rotation * Vector2.up * bulletTravelSpeed + (Vector3) spin;
+            b.phys.moveVelo = transform.rotation * Vector2.up * bulletTravelSpeed + (Vector3) spin;
 
             // Recoil
             phys.moveVelo -= (Vector2) (transform.rotation * Vector2.up * recoil);
@@ -167,7 +178,11 @@ public class Player : MonoBehaviour
             return;
 
         GameManager.pulseAt(transform.position, pulseRadius, pulseStrength, new GameObject[] { gameObject });
-        GameManager.parryAt(transform.position, parryRadius, 10f, new GameObject[] { gameObject });
+
+        float floatingParryRadius = parryRadius;
+        if (hyperAble)
+            floatingParryRadius = dashingParryRadius;
+        GameManager.parryAt(gameObject, transform.position, floatingParryRadius, 10f, new GameObject[] { gameObject });
 
         float floatingPulseCD = pulseCooldown;
 

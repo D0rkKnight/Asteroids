@@ -24,6 +24,14 @@ public class GameManager : MonoBehaviour
 
     public ScreenWrapper castZonePrefab;
 
+    // Difficulty control
+    public int pointsPerAstWeight = 500;
+
+    public enum ALIGN
+    {
+        PLAYER, ENEMY
+    }
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -55,7 +63,7 @@ public class GameManager : MonoBehaviour
             totalAstWeight += a.size + 1; // Use something else later
         }
 
-        int astWeightTarget = baseAstWeightTarget + score / 1000;
+        int astWeightTarget = baseAstWeightTarget + score / pointsPerAstWeight;
         if (totalAstWeight < astWeightTarget)
         {
             // Get size
@@ -168,7 +176,7 @@ public class GameManager : MonoBehaviour
         });
     }
 
-    public static void parryAt(Vector2 pos, float radius, float ejectSpeed, GameObject[] banList)
+    public static void parryAt(GameObject caster, Vector2 pos, float radius, float ejectSpeed, GameObject[] banList)
     {
         ScreenWrapper parry = Instantiate(sing.castZonePrefab, pos, Quaternion.identity);
         parry.GetComponent<CircleCollider2D>().radius = radius;
@@ -192,7 +200,34 @@ public class GameManager : MonoBehaviour
             Asteroid ast = obj.GetComponent<Asteroid>();
             if (ast != null)
             {
-                ast.kill();
+                Asteroid[] children = ast.kill();
+                foreach (Asteroid a in children)
+                    parry.GetComponent<ScreenWrapper>().colBanList.Add(a.gameObject);
+            }
+
+            // Parry boosts
+            Bullet bul = obj.GetComponent<Bullet>();
+            if (bul != null)
+            {
+                bul.transform.localScale *= 2;
+
+                // Reflect it
+                Vector2 dir = ((Vector2)bul.transform.position - pos).normalized;
+                Vector2 perp = Vector2.Dot(dir, bul.phys.moveVelo) * dir;
+                Vector2 tang = bul.phys.moveVelo - perp;
+
+                // Don't reflect if object is travelling away
+                int refCoef = (int) Mathf.Sign(Vector2.Dot(bul.phys.moveVelo, dir));
+
+                bul.phys.moveVelo = (refCoef * perp + tang) * 2f;
+                bul.piercing *= 3;
+
+                // Recoil
+                PhysicsObject cPhys = caster.GetComponent<PhysicsObject>();
+                if (cPhys != null)
+                {
+                    cPhys.moveVelo -= dir * 2.0f;
+                }
             }
         });
     }

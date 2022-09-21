@@ -19,6 +19,6 @@ public class WrapGhost : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        parent.onCollision.Invoke(ScreenWrapper.tryGetTrueObject(other.gameObject));
+        parent.tryCollisionCheck(other);
     }
 }

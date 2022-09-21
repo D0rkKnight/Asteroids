@@ -99,17 +99,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba996eae9f6d514bbdf49ec35702fc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spinAccel: 4
-  moveAccel: 7
+  spinAccel: 7
+  moveAccel: 10
   spinBreakFactor: 3
   moveBreakFactor: 2.5
+  floatingSpinInput: 0
+  spinAccelRampFactor: 15
   input: {fileID: 5356658205882211372}
   heldXY: {x: 0, y: 0}
   firing: 0
   firerate: 3
   nextFireTime: 0
   bulletPrefab: {fileID: 8336660168687126281, guid: 88b5e3a7366ee8c47ad826db7d7adaa1, type: 3}
-  bulletTravelSpeed: 10
+  bulletTravelSpeed: 15
   recoil: 1
   dashDur: 0.2
   dashSpeed: 15
@@ -122,7 +124,8 @@ MonoBehaviour:
   pulseStrength: 2
   pulseCooldown: 5
   pulseAvailable: 1
-  parryRadius: 1
+  parryRadius: 2
+  dashingParryRadius: 3
   hyperSpeed: 10
   hyperPrewindow: 0.2
   hyperPostwindow: 0.2
@@ -417,6 +420,7 @@ MonoBehaviour:
   onCollision:
     m_PersistentCalls:
       m_Calls: []
+  colBanList: []
   loopable: 1
 --- !u!114 &1878037960
 MonoBehaviour:

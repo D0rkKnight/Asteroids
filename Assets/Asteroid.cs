@@ -44,15 +44,17 @@ public class Asteroid : MonoBehaviour, GhostCollidable
             Destroy(gameObject);
     }
 
-    public void kill()
+    public Asteroid[] kill()
     {
         // Destroy this asteroid
         Destroy(gameObject);
 
         if (size == 0)
-            return;
+            return new Asteroid[0];
 
         // Blow up into multiple asteroids
+        Asteroid[] ret = new Asteroid[2];
+
         for (int i = 0; i < 2; i++) {
             Asteroid child = GameManager.spawnAsteroid(size-1, transform.position);
 
@@ -64,10 +66,14 @@ public class Asteroid : MonoBehaviour, GhostCollidable
 
             // Random spin
             child.phys.spinVelo = Random.Range(-splitSpin, splitSpin);
+
+            ret[i] = child;
         }
 
         // Add score!
         GameManager.sing.score += (size + 1) * 100;
+
+        return ret;
     }
 
     public void OnGhostCollision(GameObject collision)

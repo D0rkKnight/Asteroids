@@ -3,12 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D.Animation;
 
+[RequireComponent(typeof(PhysicsObject))]
 public class Bullet : MonoBehaviour, GhostCollidable
 {
-    public Vector2 velo;
+    public PhysicsObject phys;
     public bool destroyed = false; // Tag for same frame collisions
 
     public float life = 3f;
+    public int piercing = 1;
+
+    public GameManager.ALIGN align = GameManager.ALIGN.PLAYER;
+
+    private void Awake()
+    {
+        phys = GetComponent<PhysicsObject>();
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -25,7 +34,6 @@ public class Bullet : MonoBehaviour, GhostCollidable
     // Update is called once per frame
     void Update()
     {
-        transform.position += (Vector3) velo * Time.deltaTime;
     }
 
     public void destroyObj()
@@ -46,7 +54,10 @@ public class Bullet : MonoBehaviour, GhostCollidable
         if (ast != null)
         {
             ast.kill();
-            destroyObj();
+
+            piercing--;
+            if (piercing <= 0)
+                destroyObj();
         }
     }
 }

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 97c7fb6abda5a0d4db81afdf3b5a040a, type: 3}
-  m_Name: AstProfile
+  m_Name: BulletProfile
   m_EditorClassIdentifier: 
   linearDrag: 0
   angularSlowdown: 0
-  maxSpinVelo: 100
-  maxMoveVelo: 10
-  softMaxMoveVelo: 3
-  overcapLinearDrag: 7
+  maxSpinVelo: 1000
+  maxMoveVelo: 1000
+  softMaxMoveVelo: 1000
+  overcapLinearDrag: 0

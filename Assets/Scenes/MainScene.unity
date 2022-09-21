@@ -349,7 +349,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
   m_MoveRepeatDelay: 0.5
   m_MoveRepeatRate: 0.1
   m_XRTrackingOrigin: {fileID: 0}
@@ -605,7 +604,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 7
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1114,7 +1113,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71cc062de9224964997b38edb7dbdda0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  players: []
+  players:
+  - {fileID: 0}
   playerPrefab: {fileID: 5356658205882211374, guid: 207092785164e22448cc6f9f9a76a752, type: 3}
   asteroidPrefabs:
   - {fileID: 7157960286367897908, guid: 5fa5e6e15d52da9449e833ee4fff8694, type: 3}
@@ -1135,6 +1135,7 @@ MonoBehaviour:
   lives: 3
   gameIsOver: 0
   castZonePrefab: {fileID: 6525239985008822208, guid: 5e55d5b4a87da324ebf735644017f37c, type: 3}
+  pointsPerAstWeight: 500
 --- !u!4 &2125330212
 Transform:
   m_ObjectHideFlags: 0

@@ -10,7 +10,10 @@ public class ScreenWrapper : MonoBehaviour
     public GameObject[,] ghosts;
     public UnityEvent<GameObject> onSetupObject;
     public UnityEvent<Vector2, GameObject> onWrap;
+
+    // Collision delegate (could be eventually separated to another component)
     public UnityEvent<GameObject> onCollision; // Handles both ghost and core collisions
+    public List<GameObject> colBanList;
 
     public bool loopable = true; // Toggles whether the screen wrapper is wrapping items
 
@@ -18,6 +21,7 @@ public class ScreenWrapper : MonoBehaviour
     void Start()
     {
         ghosts = new GameObject[3, 3];
+        colBanList = new List<GameObject>();
 
         // Collect collision events from elsewhere
         foreach (GhostCollidable collTarget in GetComponents<GhostCollidable>())
@@ -150,7 +154,16 @@ public class ScreenWrapper : MonoBehaviour
 
     public void OnTriggerEnter2D(Collider2D collision)
     {
-        onCollision.Invoke(tryGetTrueObject(collision.gameObject));
+        tryCollisionCheck(collision);
+    }
+
+    public void tryCollisionCheck(Collider2D collision)
+    {
+        GameObject trueObj = tryGetTrueObject(collision.gameObject);
+        if (colBanList.Contains(trueObj))
+            return;
+
+        onCollision.Invoke(trueObj);
     }
 
     public static GameObject tryGetTrueObject(GameObject obj)
