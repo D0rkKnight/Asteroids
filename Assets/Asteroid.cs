@@ -56,8 +56,11 @@ public class Asteroid : MonoBehaviour, GhostCollidable
         for (int i = 0; i < 2; i++) {
             Asteroid child = GameManager.spawnAsteroid(size-1, transform.position);
 
+            // Slight spawn shift
+            child.transform.position += (Vector3) Random.insideUnitCircle.normalized * (size + 1) / 4;
+
             // Make this respect conservation of momentum and bullet weight
-            child.phys.moveVelo = Random.insideUnitCircle.normalized * splitSpeed;
+            child.phys.moveVelo = phys.moveVelo + Random.insideUnitCircle.normalized * splitSpeed;
 
             // Random spin
             child.phys.spinVelo = Random.Range(-splitSpin, splitSpin);

@@ -19,18 +19,25 @@ public class PhysicsObject : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Limiters
+        // Hard Limiters
         if (moveVelo.magnitude > profile.maxMoveVelo)
             moveVelo *= profile.maxMoveVelo / moveVelo.magnitude;
         if (Mathf.Abs(spinVelo) > profile.maxSpinVelo)
             spinVelo *= profile.maxSpinVelo / Mathf.Abs(spinVelo);
 
+        // Soft limiters
+        float effLinDrag = profile.linearDrag;
+        float angLinDrag = profile.angularSlowdown;
+
+        if (moveVelo.magnitude > profile.softMaxMoveVelo)
+            effLinDrag = profile.overcapLinearDrag;
+
         // Drag
-        float drag = Time.deltaTime * profile.linearDrag;
+        float drag = Time.deltaTime * effLinDrag;
         drag = Mathf.Min(drag, Mathf.Abs(moveVelo.magnitude));
         moveVelo -= moveVelo.normalized * drag;
 
-        spinVelo = Mathf.Lerp(spinVelo, 0, profile.angularSlowdown * Time.deltaTime);
+        spinVelo = Mathf.Lerp(spinVelo, 0, angLinDrag * Time.deltaTime);
 
         // Apply velocities
         transform.Rotate(Vector3.back, Time.deltaTime * spinVelo);

@@ -10,4 +10,7 @@ public class PhysicsProfile : ScriptableObject
 
     public float maxSpinVelo = 1000f;
     public float maxMoveVelo = 1000f;
+
+    public float softMaxMoveVelo = 10f;
+    public float overcapLinearDrag = 4f;
 }

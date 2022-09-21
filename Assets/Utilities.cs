@@ -6,18 +6,20 @@ using UnityEngine;
 public class Utilities
 {
     public static string[] copyBanList = new string[] {
-        "usedByComposite", "density"
+        "usedByComposite", "density", "tag"
     }; 
 
     public static Component copyComponent(Component comp, GameObject target)
     {
         System.Type type = comp.GetType();
-        Component newComp = target.AddComponent(type);
+        Component targetComp = target.GetComponent(type);
+        if (targetComp == null)
+            targetComp = target.AddComponent(type);
 
         // Copy over fields
         FieldInfo[] fields = type.GetFields();
         foreach (FieldInfo f in fields)
-            f.SetValue(newComp, f.GetValue(comp));
+            f.SetValue(targetComp, f.GetValue(comp));
 
         // Copy over properties too (this feels really janky...)
         PropertyInfo[] props = type.GetProperties();
@@ -35,9 +37,9 @@ public class Utilities
                 continue;
 
             if (p.SetMethod != null && p.GetMethod != null)
-                p.SetValue(newComp, p.GetValue(comp));
+                p.SetValue(targetComp, p.GetValue(comp));
         }
 
-        return newComp;
+        return targetComp;
     }
 }

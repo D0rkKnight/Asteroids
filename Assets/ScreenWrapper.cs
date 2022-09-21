@@ -23,6 +23,7 @@ public class ScreenWrapper : MonoBehaviour
         foreach (GhostCollidable collTarget in GetComponents<GhostCollidable>())
             onCollision.AddListener(collTarget.OnGhostCollision);
 
+        // Redundancy check inside prevents double init from on-awake forced init
         if (loopable)
             initWrapper();
     }
@@ -36,6 +37,10 @@ public class ScreenWrapper : MonoBehaviour
         SpriteRenderer sprRend = GetComponent<SpriteRenderer>();
         if (sprRend != null)
             ghost.AddComponent<SpriteRenderer>();
+
+        LineRenderer lRend = GetComponent<LineRenderer>();
+        if (lRend != null)
+            ghost.AddComponent<LineRenderer>();
 
         WrapGhost wr = ghost.AddComponent<WrapGhost>();
         wr.parent = this;
@@ -60,11 +65,25 @@ public class ScreenWrapper : MonoBehaviour
 
         SpriteRenderer sprRend = GetComponent<SpriteRenderer>();
         if (sprRend != null)
+            Utilities.copyComponent(sprRend, ghost);
+
+        LineRenderer lRend = GetComponent<LineRenderer>();
+        if (lRend != null)
         {
-            // Manually write in the data since we'll need to do it in runtime later
-            SpriteRenderer gRend = ghost.GetComponent<SpriteRenderer>();
-            gRend.sprite = sprRend.sprite;
-            gRend.color = sprRend.color;
+            Utilities.copyComponent(lRend, ghost);
+
+            // Write in points manually
+            LineRenderer gRend = ghost.GetComponent<LineRenderer>();
+            gRend.positionCount = lRend.positionCount;
+
+            Vector3[] positions = new Vector3[gRend.positionCount];
+            lRend.GetPositions(positions);
+
+            // Translate to ghost's space
+            for (int i=0; i<positions.Length; i++)
+                positions[i] += ghost.transform.position - transform.position;
+
+            gRend.SetPositions(positions);
         }
     }
 
@@ -155,6 +174,10 @@ public class ScreenWrapper : MonoBehaviour
 
     public void initWrapper()
     {
+        // Might be getting tripped before the start call
+        if (ghosts == null)
+            ghosts = new GameObject[3, 3];
+
         GameManager.getGameCorners(out Vector2 bl, out Vector2 ur);
         Vector2 dims = ur - bl;
 

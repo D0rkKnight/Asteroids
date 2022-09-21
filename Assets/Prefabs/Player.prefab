@@ -118,17 +118,16 @@ MonoBehaviour:
   dashAvailable: 1
   dashCooldown: 3
   dashSlowdownAndEDI: 1
-  floatingDashCD: 0
   pulseRadius: 3
   pulseStrength: 2
   pulseCooldown: 5
   pulseAvailable: 1
-  pulseAfterimagePrefab: {fileID: 4671719463641220823, guid: 25cf89511870dc54e9f2950ce04024b8, type: 3}
+  parryRadius: 1
   hyperSpeed: 10
   hyperPrewindow: 0.2
   hyperPostwindow: 0.2
   hyperAble: 0
-  hyperCooldown: 0.5
+  hyperCooldown: 0.1
   regProfile: {fileID: 11400000, guid: d6847b38fa1edc442ba2006e55f47406, type: 2}
   dashProfile: {fileID: 11400000, guid: 51fc5eb71acf7734d85c300dc809ff05, type: 2}
   invuln: 0
@@ -266,8 +265,8 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 587b8a01-d3c7-42d7-929d-59585ca0ef64
     m_ActionName: Player/Pulse[/Keyboard/l]
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
+  m_NeverAutoSwitchControlSchemes: 1
+  m_DefaultControlScheme: Left
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
@@ -435,6 +434,7 @@ MonoBehaviour:
   flicker1: {r: 1, g: 1, b: 1, a: 1}
   flicker2: {r: 1, g: 1, b: 1, a: 0.49803922}
   flickerInterval: 0.2
+  overtone: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &8840761210806334048
 GameObject:
   m_ObjectHideFlags: 0

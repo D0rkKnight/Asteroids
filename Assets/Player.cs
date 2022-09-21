@@ -35,14 +35,15 @@ public class Player : MonoBehaviour
     public bool dashAvailable = true;
     public float dashCooldown = 3f;
     public bool dashSlowdownAndEDI = true;
-    public float floatingDashCD;
 
     // Pulse info
     public float pulseRadius = 2f;
     public float pulseStrength = 1f;
     public float pulseCooldown = 5f;
     public bool pulseAvailable = true;
-    public CircleVisualizer pulseAfterimagePrefab;
+
+    // Parries
+    public float parryRadius = 0.5f;
 
     // Hyperdashes
     public float hyperSpeed = 15f;
@@ -75,7 +76,6 @@ public class Player : MonoBehaviour
     private void Start()
     {
         phys.profile = regProfile;
-        floatingDashCD = dashCooldown;
     }
 
     // Update is called once per frame
@@ -134,6 +134,8 @@ public class Player : MonoBehaviour
 
             nextFireTime = Time.time + (1f / firerate);
         }
+
+        setColor();
     }
 
     public void onMoveCall(InputAction.CallbackContext context)
@@ -156,7 +158,7 @@ public class Player : MonoBehaviour
             return;
 
         Vector2 dir = transform.rotation * Vector2.up;
-        StartCoroutine(dashFor(dashDur, dir, dashSpeed));
+        StartCoroutine(dashFor(dashDur, dir, dashSpeed, dashCooldown));
     }
 
     public void onPulseCall(InputAction.CallbackContext context)
@@ -164,10 +166,8 @@ public class Player : MonoBehaviour
         if (!context.performed || !pulseAvailable)
             return;
 
-        GameManager.pulseAt(transform.position, pulseRadius, pulseStrength);
-
-        CircleVisualizer cViz = Instantiate(pulseAfterimagePrefab, transform.position, Quaternion.identity);
-        cViz.radius = pulseRadius;
+        GameManager.pulseAt(transform.position, pulseRadius, pulseStrength, new GameObject[] { gameObject });
+        GameManager.parryAt(transform.position, parryRadius, 10f, new GameObject[] { gameObject });
 
         float floatingPulseCD = pulseCooldown;
 
@@ -176,6 +176,7 @@ public class Player : MonoBehaviour
         {
             Vector2 hyperSum = (phys.moveVelo.normalized + heldXY * 1.2f);
             Vector2 hyperDir = hyperSum;
+
             if (hyperDir.magnitude > 1)
                 hyperDir = hyperDir.normalized; // Constrain to unit circle
 
@@ -183,8 +184,13 @@ public class Player : MonoBehaviour
             dashSlowdownAndEDI = false;
 
             // Change cooldown times
-            floatingDashCD = hyperCooldown;
             floatingPulseCD = hyperCooldown;
+
+            // End hyper window
+            hyperAble = false;
+
+            // Reset dash cooldown
+            StartCoroutine(startDashCooldown(hyperCooldown));
         }
 
         StartCoroutine(startPulseCooldown(floatingPulseCD));
@@ -227,7 +233,7 @@ public class Player : MonoBehaviour
         Destroy(gameObject);
         destroyed = true;
 
-        GameManager.sing.onPlayerDeath();
+        GameManager.sing.onPlayerDeath(this);
     }
 
     public IEnumerator invulnFor(float dur)
@@ -240,7 +246,7 @@ public class Player : MonoBehaviour
         invuln = false;
     }
 
-    public IEnumerator dashFor(float dur, Vector2 dir, float speed)
+    public IEnumerator dashFor(float dur, Vector2 dir, float speed, float cooldown)
     {
         dashing = true;
 
@@ -281,7 +287,7 @@ public class Player : MonoBehaviour
 
         // Exit dash
         dashing = false;
-        StartCoroutine(startDashCooldown(floatingDashCD));
+        StartCoroutine(startDashCooldown(cooldown));
     }
 
     public IEnumerator openRedirWindow(float dur, float speed)
@@ -307,15 +313,19 @@ public class Player : MonoBehaviour
 
     public IEnumerator startDashCooldown(float dur)
     {
+        // Clear existing cooldowns
+        StopCoroutine("startDashCooldown");
+
         dashAvailable = false;
         yield return new WaitForSeconds(dur);
         dashAvailable = true;
-
-        floatingDashCD = dashCooldown; // Return floating value to normal
     }
 
     public IEnumerator startPulseCooldown(float dur)
     {
+        // Clear existing cooldowns
+        StopCoroutine("startDashCooldown");
+
         pulseAvailable = false;
         yield return new WaitForSeconds(dur);
         pulseAvailable = true;
@@ -333,5 +343,17 @@ public class Player : MonoBehaviour
 
             yield return new WaitForSeconds(dur);
         }
+    }
+
+    // Use a centralized color switch for this, it's easier
+    public void setColor()
+    {
+        Color col = Color.clear;
+
+        if (hyperAble)
+            col = Color.magenta;
+
+        rendCtrl.overtone = col;
+        rendCtrl.compileColor();
     }
 }

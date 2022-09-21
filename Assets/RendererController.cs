@@ -10,6 +10,9 @@ public class RendererController : MonoBehaviour
     public Color flicker1;
     public Color flicker2;
     public float flickerInterval = 0.1f;
+    private Color flickerCol = Color.clear;
+
+    public Color overtone;
 
     private SpriteRenderer rend;
 
@@ -27,6 +30,16 @@ public class RendererController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+    }
+
+    public void compileColor()
+    {
+        if (flickerCol != Color.clear)
+            rend.color = flickerCol;
+        else if (overtone != Color.clear)
+            rend.color = overtone;
+        else
+            rend.color = baseCol;
     }
 
     public void flicker(float dur)
@@ -49,7 +62,7 @@ public class RendererController : MonoBehaviour
         {
             timestamp += flickerInterval_;
 
-            rend.color = colors[mode];
+            flickerCol = colors[mode];
 
             mode++;
             mode %= colors.Length;
@@ -58,6 +71,7 @@ public class RendererController : MonoBehaviour
         }
 
         // Return to base color
-        rend.color = baseCol;
+        flickerCol = Color.clear;
+        compileColor();
     }
 }

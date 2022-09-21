@@ -15,4 +15,6 @@ MonoBehaviour:
   linearDrag: 0
   angularSlowdown: 0
   maxSpinVelo: 100
-  maxMoveVelo: 3
+  maxMoveVelo: 10
+  softMaxMoveVelo: 3
+  overcapLinearDrag: 4

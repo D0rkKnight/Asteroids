@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
-    public Player player;
+    public Player[] players;
     public Player playerPrefab;
 
     public Asteroid[] asteroidPrefabs;
@@ -21,6 +22,8 @@ public class GameManager : MonoBehaviour
     public static GameManager sing;
     public const string asteroidTag = "Asteroid";
 
+    public ScreenWrapper castZonePrefab;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -28,6 +31,14 @@ public class GameManager : MonoBehaviour
             throw new System.Exception("GM Singleton broken");
 
         sing = this;
+    }
+
+    private void Start()
+    {
+        for (int i = 0; i < players.Length; i++)
+        {
+            respawnPlayer(i);
+        }
     }
 
     // Update is called once per frame
@@ -89,22 +100,23 @@ public class GameManager : MonoBehaviour
 
             // Prevent asteroid from spawning on top of player
             bool astValid = true;
-            if (player != null) {
-                astValid = astValid && Vector2.Distance(player.transform.position, spawnPoint) > playerSpawnBlockRange;
-                foreach (GameObject ghost in player.GetComponent<ScreenWrapper>().ghosts)
-                    if (ghost != null)
-                        astValid = astValid && Vector2.Distance(ghost.transform.position, spawnPoint) > playerSpawnBlockRange;
-            }
+            foreach (Player p in players)
+                if (p != null) {
+                    astValid = astValid && Vector2.Distance(p.transform.position, spawnPoint) > playerSpawnBlockRange;
+                    foreach (GameObject ghost in p.GetComponent<ScreenWrapper>().ghosts)
+                        if (ghost != null)
+                            astValid = astValid && Vector2.Distance(ghost.transform.position, spawnPoint) > playerSpawnBlockRange;
+                }
 
             if (astValid)
             {
-                Vector2 spawnVelo = Quaternion.Euler(0, 0, Random.Range(-30, 30)) * -spawnPoint.normalized;
-                Vector2 exterpSP = spawnPoint + -spawnVelo * 3;
+                Vector2 spawnDir = Quaternion.Euler(0, 0, Random.Range(-30, 30)) * -spawnPoint.normalized;
+                Vector2 exterpSP = spawnPoint + -spawnDir * 3;
 
                 Asteroid ast = spawnAsteroid(targetSize, exterpSP);
 
                 // Give random velocity
-                ast.phys.moveVelo = Random.insideUnitCircle.normalized * ast.naturalSpeed;
+                ast.phys.moveVelo = spawnDir * ast.naturalSpeed;
                 ast.phys.spinVelo = Random.Range(-astSpawnSpin, astSpawnSpin);
             }
         }
@@ -136,45 +148,112 @@ public class GameManager : MonoBehaviour
         return spawned;
     }
 
-    public static void pulseAt(Vector2 pos, float radius, float strength)
+    public static void pulseAt(Vector2 pos, float radius, float strength, GameObject[] banList)
     {
-        Collider2D[] results = new Collider2D[100]; // 100 item cap
-        int collsFound = Physics2D.OverlapCircle(pos, radius, new ContactFilter2D().NoFilter(), results);
+        ScreenWrapper pulse = Instantiate(sing.castZonePrefab, pos, Quaternion.identity);
+        pulse.GetComponent<CircleCollider2D>().radius = radius;
+        pulse.GetComponent<CircleVisualizer>().radius = radius;
 
-        // Push gameobjects away
-        for (int i=0; i<collsFound; i++)
-        {
-            Collider2D coll = results[i];
-            PhysicsObject phys = coll.GetComponent<PhysicsObject>();
+        pulse.onCollision.AddListener((GameObject obj) => {
+            if (System.Array.Exists(banList, (GameObject gObj) => { return gObj == obj;  })) {
+                return; // Item is banned
+            }
+
+            PhysicsObject phys = obj.GetComponent<PhysicsObject>();
 
             if (phys != null)
             {
-                phys.moveVelo += strength * ((Vector2)coll.transform.position - pos).normalized;
+                phys.moveVelo += strength * ((Vector2)obj.transform.position - pos).normalized;
             }
+        });
+    }
+
+    public static void parryAt(Vector2 pos, float radius, float ejectSpeed, GameObject[] banList)
+    {
+        ScreenWrapper parry = Instantiate(sing.castZonePrefab, pos, Quaternion.identity);
+        parry.GetComponent<CircleCollider2D>().radius = radius;
+        parry.GetComponent<CircleVisualizer>().radius = radius;
+
+        parry.onCollision.AddListener((GameObject obj) => {
+            if (System.Array.Exists(banList, (GameObject gObj) => { return gObj == obj; }))
+            {
+                return; // Item is banned
+            }
+
+            PhysicsObject phys = obj.GetComponent<PhysicsObject>();
+
+            if (phys != null)
+            {
+                // Throw them away
+                Vector2 dir = ((Vector2)phys.transform.position - pos).normalized;
+                phys.moveVelo = dir * ejectSpeed;
+            }
+
+            Asteroid ast = obj.GetComponent<Asteroid>();
+            if (ast != null)
+            {
+                ast.kill();
+            }
+        });
+    }
+
+    public void onPlayerDeath(Player deadPlayer)
+    {
+        int index = -1;
+        for (int i=0; i<players.Length; i++)
+        {
+            if (players[i] == deadPlayer)
+            {
+                index = i;
+                break;
+            }
+        }
+
+        if (index >= 0)
+        {
+            lives--;
+            if (lives > 0)
+                StartCoroutine(playerDeathCR(index));
+            else
+                gameOver();
         }
     }
 
-    public void onPlayerDeath()
-    {
-        lives--;
-
-        if (lives > 0)
-            StartCoroutine(playerDeathCR());
-        else
-            gameOver();
-    }
-
-    public IEnumerator playerDeathCR()
+    public IEnumerator playerDeathCR(int index)
     {
         yield return new WaitForSeconds(1f);
 
-        respawnPlayer();
+        respawnPlayer(index);
     }
 
-    public void respawnPlayer()
+    public void respawnPlayer(int index)
     {
-        player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
-        StartCoroutine(player.invulnFor(2f));
+        string ctrlScheme = "Keyboard&Mouse";
+
+        if (players.Length > 1)
+            switch (index)
+            {
+                case 0:
+                    ctrlScheme = "Left";
+                    break;
+                case 1:
+                    ctrlScheme = "Right";
+                    break;
+            }
+
+        players[index] = PlayerInput.Instantiate(playerPrefab.gameObject, controlScheme: ctrlScheme, pairWithDevice: Keyboard.current).GetComponent<Player>();
+
+        // Array out players in a row
+        Vector2 pos = Vector2.zero;
+
+        if (players.Length > 1)
+        {
+            float extents = 3;
+            pos = new Vector2(-extents + (extents * 2 / (players.Length - 1)) * index, 0);
+        }
+        players[index].transform.position = pos;
+
+        StartCoroutine(players[index].invulnFor(2f));
     }
 
     public void gameOver()
@@ -187,7 +266,10 @@ public class GameManager : MonoBehaviour
         lives = 3;
         score = 0;
 
-        respawnPlayer();
+        for (int i = 0; i < players.Length; i++)
+        {
+            respawnPlayer(i);
+        }
 
         // Clear every asteroid
         foreach (GameObject obj in GameObject.FindGameObjectsWithTag(asteroidTag))
