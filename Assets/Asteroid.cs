@@ -3,15 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(PhysicsObject))]
-public class Asteroid : MonoBehaviour, GhostCollidable
+public class Asteroid : FlyingObject, GhostCollidable
 {
-    public int size; // 0 is smallest
     public float splitSpeed = 1f;
     public float splitSpin = 20f;
-    public float naturalSpeed = 1f;
-    public float overcapSlowdownRate = 1f;
-
-    public PhysicsObject phys;
 
     // Start is called before the first frame update
     void Awake()
@@ -22,29 +17,10 @@ public class Asteroid : MonoBehaviour, GhostCollidable
     // Update is called once per frame
     void Update()
     {
-        if (phys.moveVelo.magnitude > naturalSpeed)
-        {
-            phys.moveVelo = Vector2.Lerp(phys.moveVelo, phys.moveVelo.normalized * naturalSpeed, overcapSlowdownRate * Time.deltaTime);
-        }
 
-        // TODO: Might want the gamemanager handling this behavior
-        // Activate looping on full screen entry
-        SpriteRenderer sprRend = GetComponent<SpriteRenderer>();
-        ScreenWrapper wrapper = sprRend.GetComponent<ScreenWrapper>();
-
-        GameManager.getGameCorners(out Vector2 bl, out Vector2 ur);
-        Bounds screenBounds = new Bounds((bl+ur)/2, (Vector3) (ur-bl) + new Vector3(0, 0, 1000));
-
-        if (screenBounds.Contains(sprRend.bounds.min) && screenBounds.Contains(sprRend.bounds.max) &&
-            !wrapper.loopable)
-            wrapper.activateWrapper();
-
-        // Destroy self if too far from edge (might struggle with large objects)
-        if (screenBounds.SqrDistance(transform.position) > 10)
-            Destroy(gameObject);
     }
 
-    public Asteroid[] kill()
+    public override FlyingObject[] onHit()
     {
         // Destroy this asteroid
         Destroy(gameObject);
@@ -74,13 +50,5 @@ public class Asteroid : MonoBehaviour, GhostCollidable
         GameManager.sing.score += (size + 1) * 100;
 
         return ret;
-    }
-
-    public void OnGhostCollision(GameObject collision)
-    {
-        Player player = collision.GetComponent<Player>();
-
-        if (player != null && !player.destroyed)
-            player.hit();
     }
 }

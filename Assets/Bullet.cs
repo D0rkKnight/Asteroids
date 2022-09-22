@@ -49,11 +49,11 @@ public class Bullet : MonoBehaviour, GhostCollidable
             return;
 
         // Asteroid check (might've hit a wrap ghost)
-        Asteroid ast = obj.GetComponent<Asteroid>();
+        FlyingObject fObj = obj.GetComponent<FlyingObject>();
 
-        if (ast != null)
+        if (fObj != null)
         {
-            ast.kill();
+            fObj.onHit();
 
             piercing--;
             if (piercing <= 0)

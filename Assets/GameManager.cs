@@ -200,9 +200,9 @@ public class GameManager : MonoBehaviour
             Asteroid ast = obj.GetComponent<Asteroid>();
             if (ast != null)
             {
-                Asteroid[] children = ast.kill();
-                foreach (Asteroid a in children)
-                    parry.GetComponent<ScreenWrapper>().colBanList.Add(a.gameObject);
+                FlyingObject[] children = ast.onHit();
+                foreach (FlyingObject fObj in children)
+                    parry.GetComponent<ScreenWrapper>().colBanList.Add(fObj.gameObject);
             }
 
             // Parry boosts
