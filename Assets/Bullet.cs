@@ -48,7 +48,9 @@ public class Bullet : MonoBehaviour, GhostCollidable
         if (destroyed)
             return;
 
-        // Asteroid check (might've hit a wrap ghost)
+        // Collision check (might've hit a wrap ghost)
+        // Either targets a flying object or a player
+
         FlyingObject fObj = obj.GetComponent<FlyingObject>();
 
         if (fObj != null)

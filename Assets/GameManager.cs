@@ -124,7 +124,7 @@ public class GameManager : MonoBehaviour
                 Asteroid ast = spawnAsteroid(targetSize, exterpSP);
 
                 // Give random velocity
-                ast.phys.moveVelo = spawnDir * ast.naturalSpeed;
+                ast.phys.moveVelo = spawnDir * ast.naturalSpeedCap;
                 ast.phys.spinVelo = Random.Range(-astSpawnSpin, astSpawnSpin);
             }
         }

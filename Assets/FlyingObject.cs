@@ -5,7 +5,7 @@ using UnityEngine;
 public class FlyingObject : MonoBehaviour, GhostCollidable
 {
     public int size; // 0 is smallest
-    public float naturalSpeed = 1f;
+    public float naturalSpeedCap = 1f;
     public float overcapSlowdownRate = 1f;
 
     public PhysicsObject phys;
@@ -24,9 +24,9 @@ public class FlyingObject : MonoBehaviour, GhostCollidable
     void Update()
     {
         // Natural slowdown
-        if (phys.moveVelo.magnitude > naturalSpeed)
+        if (phys.moveVelo.magnitude > naturalSpeedCap)
         {
-            phys.moveVelo = Vector2.Lerp(phys.moveVelo, phys.moveVelo.normalized * naturalSpeed, overcapSlowdownRate * Time.deltaTime);
+            phys.moveVelo = Vector2.Lerp(phys.moveVelo, phys.moveVelo.normalized * naturalSpeedCap, overcapSlowdownRate * Time.deltaTime);
         }
 
         // TODO: Might want the gamemanager handling this behavior
@@ -62,8 +62,24 @@ public class FlyingObject : MonoBehaviour, GhostCollidable
     public IEnumerator laserCycle()
     {
         // Find target
-        // if ()
+        while (true) {
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            if (players.Length > 0) {
 
-        // Bullet laser = Instantiate(laserPrefab, transform.position, )
+                GameObject target = players[0];
+                foreach (GameObject p in players)
+                    if (Vector2.Distance(p.transform.position, transform.position) <
+                        Vector2.Distance(target.transform.position, transform.position))
+                        target = p;
+
+                Vector2 dir = (target.transform.position - transform.position).normalized;
+                Bullet laser = Instantiate(laserPrefab, transform.position,
+                    Quaternion.LookRotation(dir, Vector3.forward));
+
+                laser.phys.moveVelo = dir * laserSpeed;
+            }
+
+            yield return new WaitForSeconds(1.0f / laserFirerate);
+        }
     }
 }
