@@ -8,8 +8,8 @@ public class GameManager : MonoBehaviour
     public Player[] players;
     public Player playerPrefab;
 
-    public Asteroid[] asteroidPrefabs;
-    public float[] astSpawnWeights;
+    public SpawnProfile spawnProfile;
+
     public int baseAstWeightTarget = 5;
     public float astSpawnSpin = 20f;
     public float playerSpawnBlockRange = 2f;
@@ -20,17 +20,12 @@ public class GameManager : MonoBehaviour
     public bool gameIsOver = false;
 
     public static GameManager sing;
-    public const string asteroidTag = "Asteroid";
+    public const string fObjTag = "FlyingObject";
 
     public ScreenWrapper castZonePrefab;
 
     // Difficulty control
     public int pointsPerAstWeight = 500;
-
-    public enum ALIGN
-    {
-        PLAYER, ENEMY
-    }
 
     // Start is called before the first frame update
     void Awake()
@@ -55,10 +50,10 @@ public class GameManager : MonoBehaviour
         // Count the # of asteroids and spawn more if few are left
         int totalAstWeight = 0;
 
-        GameObject[] asteroids = GameObject.FindGameObjectsWithTag(asteroidTag);
+        GameObject[] asteroids = GameObject.FindGameObjectsWithTag(fObjTag);
         foreach (GameObject g in asteroids)
         {
-            Asteroid a = g.GetComponent<Asteroid>();
+            FlyingObject a = g.GetComponent<FlyingObject>();
 
             totalAstWeight += a.size + 1; // Use something else later
         }
@@ -68,20 +63,20 @@ public class GameManager : MonoBehaviour
         {
             // Get size
             float wRange = 0f;
-            foreach (float f in astSpawnWeights)
-                wRange += f;
+            foreach (SpawnProfile.weightPair pair in spawnProfile.pairs)
+                wRange += pair.weight;
 
             float randWeight = Random.Range(0, wRange);
 
-            int targetSize = 0;
-            for (int i=0; i<astSpawnWeights.Length; i++)
+            SpawnProfile.weightPair targetPair = spawnProfile.pairs[0];
+            foreach (SpawnProfile.weightPair pair in spawnProfile.pairs)
             {
-                if (randWeight < astSpawnWeights[i])
+                if (randWeight < pair.weight)
                 {
-                    targetSize = i;
+                    targetPair = pair;
                     break;
                 }
-                randWeight -= astSpawnWeights[i];
+                randWeight -= pair.weight;
             }
 
             // Get random spot on the perimeter
@@ -107,25 +102,25 @@ public class GameManager : MonoBehaviour
             spawnPoint.y -= Mathf.Min(ph, randPerim);
 
             // Prevent asteroid from spawning on top of player
-            bool astValid = true;
+            bool spawnValid = true;
             foreach (Player p in players)
                 if (p != null) {
-                    astValid = astValid && Vector2.Distance(p.transform.position, spawnPoint) > playerSpawnBlockRange;
+                    spawnValid = spawnValid && Vector2.Distance(p.transform.position, spawnPoint) > playerSpawnBlockRange;
                     foreach (GameObject ghost in p.GetComponent<ScreenWrapper>().ghosts)
                         if (ghost != null)
-                            astValid = astValid && Vector2.Distance(ghost.transform.position, spawnPoint) > playerSpawnBlockRange;
+                            spawnValid = spawnValid && Vector2.Distance(ghost.transform.position, spawnPoint) > playerSpawnBlockRange;
                 }
 
-            if (astValid)
+            if (spawnValid)
             {
                 Vector2 spawnDir = Quaternion.Euler(0, 0, Random.Range(-30, 30)) * -spawnPoint.normalized;
                 Vector2 exterpSP = spawnPoint + -spawnDir * 3;
 
-                Asteroid ast = spawnAsteroid(targetSize, exterpSP);
+                FlyingObject spawn = spawnFlyingObj(targetPair.prefab.GetComponent<FlyingObject>(), exterpSP);
 
                 // Give random velocity
-                ast.phys.moveVelo = spawnDir * ast.naturalSpeedCap;
-                ast.phys.spinVelo = Random.Range(-astSpawnSpin, astSpawnSpin);
+                spawn.phys.moveVelo = spawnDir * spawn.naturalSpeedCap;
+                spawn.phys.spinVelo = Random.Range(-astSpawnSpin, astSpawnSpin);
             }
         }
     }
@@ -137,23 +132,32 @@ public class GameManager : MonoBehaviour
         ur = Camera.main.ViewportToWorldPoint(new Vector2(1, 1)) + new Vector3(padding, padding);
     }
 
-    public static Asteroid spawnAsteroid(int size, Vector2 pos)
+    public static FlyingObject spawnFlyingObj(FlyingObject fObj, Vector2 pos)
     {
-        // Builds valid asteroid list on demand because I really don't want to mantain a cache
-        List<Asteroid> valid = new List<Asteroid>();
-
-        foreach (Asteroid a in sing.asteroidPrefabs)
-            if (a.size == size)
-                valid.Add(a);
-
-        int rand = Random.Range(0, valid.Count);
-        Asteroid pref = valid[rand];
-
-        Asteroid spawned = Instantiate(pref, pos, Quaternion.identity);
+        // Spawn and send it out
+        FlyingObject spawned = Instantiate(fObj, pos, Quaternion.identity);
         spawned.transform.rotation = Quaternion.Euler(0, 0, Random.Range(-180f, 180f));
         spawned.GetComponent<ScreenWrapper>().loopable = false;
 
         return spawned;
+    }
+
+    public static Asteroid spawnAsteroid(int size, Vector2 pos)
+    {
+        List<Asteroid> valid = new();
+
+        foreach (SpawnProfile.weightPair pair in sing.spawnProfile.pairs)
+        {
+            Asteroid ast = pair.prefab.GetComponent<Asteroid>();
+
+            if (ast != null && ast.size == size)
+                valid.Add(ast);
+        }
+
+        Asteroid pick = valid[Random.Range(0, valid.Count)];
+        Asteroid spawn = (Asteroid) spawnFlyingObj(pick, pos);
+
+        return spawn;
     }
 
     public static void pulseAt(Vector2 pos, float radius, float strength, GameObject[] banList)
@@ -171,7 +175,8 @@ public class GameManager : MonoBehaviour
 
             if (phys != null)
             {
-                phys.moveVelo += strength * ((Vector2)obj.transform.position - pos).normalized;
+                Vector2 newVelo = phys.moveVelo + strength * ((Vector2)obj.transform.position - pos).normalized;
+                rotateWithVeloChange(phys, newVelo);
             }
         });
     }
@@ -190,17 +195,10 @@ public class GameManager : MonoBehaviour
 
             PhysicsObject phys = obj.GetComponent<PhysicsObject>();
 
-            if (phys != null)
-            {
-                // Throw them away
-                Vector2 dir = ((Vector2)phys.transform.position - pos).normalized;
-                phys.moveVelo = dir * ejectSpeed;
-            }
-
             Asteroid ast = obj.GetComponent<Asteroid>();
             if (ast != null)
             {
-                FlyingObject[] children = ast.onHit();
+                FlyingObject[] children = ast.onHit(null);
                 foreach (FlyingObject fObj in children)
                     parry.GetComponent<ScreenWrapper>().colBanList.Add(fObj.gameObject);
             }
@@ -213,13 +211,15 @@ public class GameManager : MonoBehaviour
 
                 // Reflect it
                 Vector2 dir = ((Vector2)bul.transform.position - pos).normalized;
-                Vector2 perp = Vector2.Dot(dir, bul.phys.moveVelo) * dir;
-                Vector2 tang = bul.phys.moveVelo - perp;
+                //Vector2 perp = Vector2.Dot(dir, bul.phys.moveVelo) * dir;
+                //Vector2 tang = bul.phys.moveVelo - perp;
 
                 // Don't reflect if object is travelling away
-                int refCoef = (int) Mathf.Sign(Vector2.Dot(bul.phys.moveVelo, dir));
+                // int refCoef = (int) Mathf.Sign(Vector2.Dot(bul.phys.moveVelo, dir));
 
-                bul.phys.moveVelo = (refCoef * perp + tang) * 2f;
+                // Vector2 newVelo = (refCoef * perp + tang) * 2f;
+                Vector2 newVelo = dir * phys.moveVelo.magnitude * 2f;
+                rotateWithVeloChange(bul.phys, newVelo);
                 bul.piercing *= 3;
 
                 // Recoil
@@ -228,8 +228,30 @@ public class GameManager : MonoBehaviour
                 {
                     cPhys.moveVelo -= dir * 2.0f;
                 }
+
+                // Switch allegiance
+                Allegiance cAlleg = caster.GetComponent<Allegiance>();
+                Allegiance bAlleg = bul.GetComponent<Allegiance>();
+
+                if (cAlleg != null && bAlleg != null)
+                    bAlleg.alignment = cAlleg.alignment;
+            }
+            else if (phys != null)
+            {
+                // Throw them away
+                Vector2 dir = ((Vector2)phys.transform.position - pos).normalized;
+                phys.moveVelo = dir * ejectSpeed;
             }
         });
+    }
+
+    public static void rotateWithVeloChange(PhysicsObject pObj, Vector2 newVelo)
+    {
+        // Rotate bullet
+        float turnAng = Vector2.SignedAngle(pObj.moveVelo, newVelo);
+        pObj.transform.Rotate(0, 0, turnAng);
+
+        pObj.moveVelo = newVelo;
     }
 
     public void onPlayerDeath(Player deadPlayer)
@@ -244,13 +266,28 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        // If this player is a tracked player
         if (index >= 0)
         {
-            lives--;
+            lives = Mathf.Max(0, lives-1);
+            players[index] = null;
+
             if (lives > 0)
                 StartCoroutine(playerDeathCR(index));
             else
-                gameOver();
+            {
+                // If it was the last player, throw it in the towel
+                bool gOver = true;
+                foreach (Player p in players)
+                    if (p != null)
+                    {
+                        gOver = false;
+                        break;
+                    }
+
+                if (gOver)
+                    gameOver();
+            }
         }
     }
 
@@ -307,7 +344,7 @@ public class GameManager : MonoBehaviour
         }
 
         // Clear every asteroid
-        foreach (GameObject obj in GameObject.FindGameObjectsWithTag(asteroidTag))
+        foreach (GameObject obj in GameObject.FindGameObjectsWithTag(fObjTag))
             Destroy(obj);
 
         gameIsOver = false;

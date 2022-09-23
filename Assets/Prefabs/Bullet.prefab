@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 2732316328128827627}
   - component: {fileID: 5820849728714231992}
   - component: {fileID: 8231962124517975053}
+  - component: {fileID: 7102178548097759815}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -51,11 +52,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53de9e72413691146adf5e8ef1ba2da3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  size: 0
+  naturalSpeedCap: 10000
+  overcapSlowdownRate: 1
   phys: {fileID: 0}
+  destroyOnOOB: 1
+  loopOnFullEntry: 0
   destroyed: 0
   life: 3
   piercing: 1
-  align: 0
 --- !u!212 &8336660168687126278
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -212,3 +217,16 @@ MonoBehaviour:
   profile: {fileID: 11400000, guid: e9db77635e6e1514b9f78dba6d11abc0, type: 2}
   spinVelo: 0
   moveVelo: {x: 0, y: 0}
+--- !u!114 &7102178548097759815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8336660168687126282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce52c6e7d71f2794f8206ac156c3f587, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alignment: 0

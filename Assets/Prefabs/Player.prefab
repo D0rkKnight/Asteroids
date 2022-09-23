@@ -48,6 +48,7 @@ GameObject:
   - component: {fileID: 623600234537325250}
   - component: {fileID: 4691264287635753764}
   - component: {fileID: 1878037960}
+  - component: {fileID: 8184781912131422714}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -84,7 +85,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c44517cefad435548bdf21d110983e01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  profile: {fileID: 0}
+  profile: {fileID: 11400000, guid: d6847b38fa1edc442ba2006e55f47406, type: 2}
   spinVelo: 0
   moveVelo: {x: 0, y: 0}
 --- !u!114 &5356658205882211374
@@ -99,6 +100,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba996eae9f6d514bbdf49ec35702fc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  size: 0
+  naturalSpeedCap: 1000
+  overcapSlowdownRate: 1
+  phys: {fileID: 0}
+  destroyOnOOB: 1
+  loopOnFullEntry: 1
+  destroyed: 0
   spinAccel: 7
   moveAccel: 10
   spinBreakFactor: 3
@@ -134,7 +142,6 @@ MonoBehaviour:
   regProfile: {fileID: 11400000, guid: d6847b38fa1edc442ba2006e55f47406, type: 2}
   dashProfile: {fileID: 11400000, guid: 51fc5eb71acf7734d85c300dc809ff05, type: 2}
   invuln: 0
-  destroyed: 0
   afterimagePrefab: {fileID: 4325278215823363834, guid: 2107751677da3df4c9400f412393c557, type: 3}
   noseTrans: {fileID: 6112745714483011567}
   trail: {fileID: 3118964230771698026}
@@ -439,6 +446,19 @@ MonoBehaviour:
   flicker2: {r: 1, g: 1, b: 1, a: 0.49803922}
   flickerInterval: 0.2
   overtone: {r: 0, g: 0, b: 0, a: 0}
+--- !u!114 &8184781912131422714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5356658205882211375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce52c6e7d71f2794f8206ac156c3f587, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alignment: 0
 --- !u!1 &8840761210806334048
 GameObject:
   m_ObjectHideFlags: 0

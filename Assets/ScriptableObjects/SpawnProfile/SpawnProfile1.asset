@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf9a61e67c62484d9f1c7c0748ad82f, type: 3}
+  m_Name: SpawnProfile1
+  m_EditorClassIdentifier: 
+  pairs:
+  - prefab: {fileID: 7157960286367897803, guid: 5fa5e6e15d52da9449e833ee4fff8694, type: 3}
+    weight: 0
+  - prefab: {fileID: 2049908289493830953, guid: 5e930ede00ff75746aa6967753524e0f, type: 3}
+    weight: 0
+  - prefab: {fileID: 4857325428689645588, guid: fb7da1c4028ae324c9e4c15a7f235247, type: 3}
+    weight: 0
+  - prefab: {fileID: 3504110783289385925, guid: fd83c694f305ac144afabae3eec0c989, type: 3}
+    weight: 0
+  - prefab: {fileID: 5396595087917047779, guid: 4dff2b68162e26440b16f6d4469c4658, type: 3}
+    weight: 3
+  - prefab: {fileID: 854050795759409700, guid: 9199145ae9d189040a1d6a536b74dcd5, type: 3}
+    weight: 1
+  - prefab: {fileID: 6863112015796925732, guid: a21853fb3809d554f9ed0c504f30ac55, type: 3}
+    weight: 1

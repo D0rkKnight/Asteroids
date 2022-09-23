@@ -8,19 +8,13 @@ public class Asteroid : FlyingObject, GhostCollidable
     public float splitSpeed = 1f;
     public float splitSpin = 20f;
 
-    // Start is called before the first frame update
-    void Awake()
-    {
-        phys = GetComponent<PhysicsObject>();
-    }
-
     // Update is called once per frame
-    void Update()
+    public override void onUpdate()
     {
-
+        base.onUpdate();
     }
 
-    public override FlyingObject[] onHit()
+    public override FlyingObject[] onHit(FlyingObject src)
     {
         // Destroy this asteroid
         Destroy(gameObject);

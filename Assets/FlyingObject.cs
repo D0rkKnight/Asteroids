@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(PhysicsObject))]
 public class FlyingObject : MonoBehaviour, GhostCollidable
 {
     public int size; // 0 is smallest
@@ -10,14 +11,32 @@ public class FlyingObject : MonoBehaviour, GhostCollidable
 
     public PhysicsObject phys;
 
-    public Bullet laserPrefab;
-    public float laserFirerate = 0.5f;
-    public float laserSpeed = 4f;
+    public bool destroyOnOOB = true;
+    public bool loopOnFullEntry = true;
 
-    // Start is called before the first frame update
-    void Start()
+    public bool destroyed = false; // Tag for same frame collisions
+
+    // Horrible OOP jank
+    public void Awake()
     {
-        
+        phys = GetComponent<PhysicsObject>();
+
+        onAwake();
+    }
+
+    public virtual void onAwake()
+    {
+
+    }
+
+    public void Start()
+    {
+        onStart();
+    }
+
+    public virtual void onStart()
+    {
+
     }
 
     // Update is called once per frame
@@ -29,57 +48,57 @@ public class FlyingObject : MonoBehaviour, GhostCollidable
             phys.moveVelo = Vector2.Lerp(phys.moveVelo, phys.moveVelo.normalized * naturalSpeedCap, overcapSlowdownRate * Time.deltaTime);
         }
 
-        // TODO: Might want the gamemanager handling this behavior
-        // Activate looping on full screen entry
-        SpriteRenderer sprRend = GetComponent<SpriteRenderer>();
-        ScreenWrapper wrapper = sprRend.GetComponent<ScreenWrapper>();
-
         GameManager.getGameCorners(out Vector2 bl, out Vector2 ur);
         Bounds screenBounds = new Bounds((bl + ur) / 2, (Vector3)(ur - bl) + new Vector3(0, 0, 1000));
 
-        if (screenBounds.Contains(sprRend.bounds.min) && screenBounds.Contains(sprRend.bounds.max) &&
-            !wrapper.loopable)
-            wrapper.activateWrapper();
+        if (loopOnFullEntry)
+        {
+            // TODO: Might want the gamemanager handling this behavior
+            // Activate looping on full screen entry
+            SpriteRenderer sprRend = GetComponent<SpriteRenderer>();
+            ScreenWrapper wrapper = sprRend.GetComponent<ScreenWrapper>();
 
-        // Destroy self if too far from edge (might struggle with large objects)
-        if (screenBounds.SqrDistance(transform.position) > 10)
-            Destroy(gameObject);
+            if (screenBounds.Contains(sprRend.bounds.min) && screenBounds.Contains(sprRend.bounds.max) &&
+                !wrapper.loopable)
+                wrapper.activateWrapper();
+        }
+
+        if (destroyOnOOB)
+        {
+            // Destroy self if too far from edge (might struggle with large objects)
+            if (screenBounds.SqrDistance(transform.position) > 10)
+                Destroy(gameObject);
+        }
+
+        onUpdate();
+    }
+
+    public virtual void onUpdate()
+    {
+
     }
 
     // Returns children generated from hit
-    public virtual FlyingObject[] onHit()
+    public virtual FlyingObject[] onHit(FlyingObject src)
     {
         return new FlyingObject[0];
     }
+
+    // Body to body collisions handled here
     public void OnGhostCollision(GameObject collision)
     {
-        Player player = collision.GetComponent<Player>();
+        if (destroyed)
+            return;
 
-        if (player != null && !player.destroyed)
-            player.hit();
-    }
+        FlyingObject fObj = collision.GetComponent<FlyingObject>();
 
-    public IEnumerator laserCycle()
-    {
-        // Find target
-        while (true) {
-            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-            if (players.Length > 0) {
+        bool allegPassed = true;
+        Allegiance thisAlleg = GetComponent<Allegiance>();
+        Allegiance collAlleg = collision.GetComponent<Allegiance>();
+        if (thisAlleg != null && collAlleg != null)
+            allegPassed = thisAlleg.isOpponent(collAlleg);
 
-                GameObject target = players[0];
-                foreach (GameObject p in players)
-                    if (Vector2.Distance(p.transform.position, transform.position) <
-                        Vector2.Distance(target.transform.position, transform.position))
-                        target = p;
-
-                Vector2 dir = (target.transform.position - transform.position).normalized;
-                Bullet laser = Instantiate(laserPrefab, transform.position,
-                    Quaternion.LookRotation(dir, Vector3.forward));
-
-                laser.phys.moveVelo = dir * laserSpeed;
-            }
-
-            yield return new WaitForSeconds(1.0f / laserFirerate);
-        }
+        if (fObj != null && !fObj.destroyed && allegPassed)
+            fObj.onHit(this);
     }
 }

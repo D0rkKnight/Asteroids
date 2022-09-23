@@ -4,20 +4,10 @@ using UnityEngine;
 using UnityEngine.U2D.Animation;
 
 [RequireComponent(typeof(PhysicsObject))]
-public class Bullet : MonoBehaviour, GhostCollidable
+public class Bullet : FlyingObject, GhostCollidable
 {
-    public PhysicsObject phys;
-    public bool destroyed = false; // Tag for same frame collisions
-
     public float life = 3f;
     public int piercing = 1;
-
-    public GameManager.ALIGN align = GameManager.ALIGN.PLAYER;
-
-    private void Awake()
-    {
-        phys = GetComponent<PhysicsObject>();
-    }
 
     // Start is called before the first frame update
     void Start()
@@ -32,8 +22,9 @@ public class Bullet : MonoBehaviour, GhostCollidable
     }
 
     // Update is called once per frame
-    void Update()
+    void onUpdate()
     {
+        base.onUpdate();
     }
 
     public void destroyObj()
@@ -42,24 +33,12 @@ public class Bullet : MonoBehaviour, GhostCollidable
         Destroy(gameObject);
     }
 
-    public void OnGhostCollision(GameObject obj)
+    public override FlyingObject[] onHit(FlyingObject src)
     {
-        // If this thing is already dead skip (for same frame collisions)
-        if (destroyed)
-            return;
+        piercing--;
+        if (piercing <= 0)
+            destroyObj();
 
-        // Collision check (might've hit a wrap ghost)
-        // Either targets a flying object or a player
-
-        FlyingObject fObj = obj.GetComponent<FlyingObject>();
-
-        if (fObj != null)
-        {
-            fObj.onHit();
-
-            piercing--;
-            if (piercing <= 0)
-                destroyObj();
-        }
+        return new FlyingObject[0];
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PhysicsObject))]
-public class Player : MonoBehaviour
+public class Player : FlyingObject
 {
     public float spinAccel = 1f;
     public float moveAccel = 1f;
@@ -14,8 +14,6 @@ public class Player : MonoBehaviour
 
     public float floatingSpinInput = 0f;
     public float spinAccelRampFactor = 3f;
-
-    private PhysicsObject phys;
 
     public PlayerInput input;
     public Vector2 heldXY;
@@ -61,7 +59,6 @@ public class Player : MonoBehaviour
     public PhysicsProfile dashProfile;
 
     public bool invuln = false;
-    public bool destroyed = false;
 
     public Afterimage afterimagePrefab;
 
@@ -71,9 +68,10 @@ public class Player : MonoBehaviour
     public RendererController rendCtrl;
 
     // Start is called before the first frame update
-    void Awake()
+    public override void onAwake()
     {
-        phys = GetComponent<PhysicsObject>();
+        base.onAwake();
+
         rendCtrl = GetComponent<RendererController>();
     }
 
@@ -83,8 +81,10 @@ public class Player : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    public override void onUpdate()
     {
+        base.onUpdate();
+
         // Gonna if else chain this instead since it seems easier
         if (dashing)
         {
@@ -239,16 +239,17 @@ public class Player : MonoBehaviour
         trail.AddPositions(ghostVerts);*/
     }
 
-    public void hit()
+    public override FlyingObject[] onHit(FlyingObject src)
     {
         if (invuln)
-            return;
+            return new FlyingObject[0];
 
         // Boom im dead
         Destroy(gameObject);
         destroyed = true;
 
         GameManager.sing.onPlayerDeath(this);
+        return new FlyingObject[0];
     }
 
     public IEnumerator invulnFor(float dur)
