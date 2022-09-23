@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(PhysicsObject))]
 public class FlyingObject : MonoBehaviour, GhostCollidable
 {
-    public int size; // 0 is smallest
+    public int size = 1; // 0 is smallest
     public float naturalSpeedCap = 1f;
     public float overcapSlowdownRate = 1f;
 
@@ -84,12 +84,8 @@ public class FlyingObject : MonoBehaviour, GhostCollidable
         return new FlyingObject[0];
     }
 
-    // Body to body collisions handled here
-    public void OnGhostCollision(GameObject collision)
+    public void hitIfOpposing(GameObject collision)
     {
-        if (destroyed)
-            return;
-
         FlyingObject fObj = collision.GetComponent<FlyingObject>();
 
         bool allegPassed = true;
@@ -100,5 +96,14 @@ public class FlyingObject : MonoBehaviour, GhostCollidable
 
         if (fObj != null && !fObj.destroyed && allegPassed)
             fObj.onHit(this);
+    }
+
+    // Body to body collisions handled here
+    public void OnGhostCollision(GameObject collision)
+    {
+        if (destroyed)
+            return;
+
+        hitIfOpposing(collision);
     }
 }

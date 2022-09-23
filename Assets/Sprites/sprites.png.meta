@@ -3,7 +3,7 @@ guid: 837dad2f981d1ea4fbb4be6481e18e8e
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 12
+  serializedVersion: 11
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -63,7 +63,6 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
-  cookieLightType: 0
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -449,7 +448,7 @@ TextureImporter:
         width: 243
         height: 226
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -470,7 +469,7 @@ TextureImporter:
         width: 223
         height: 224
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -491,7 +490,7 @@ TextureImporter:
         width: 222
         height: 220
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -512,7 +511,7 @@ TextureImporter:
         width: 225
         height: 228
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -533,7 +532,7 @@ TextureImporter:
         width: 239
         height: 469
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -554,7 +553,7 @@ TextureImporter:
         width: 252
         height: 477
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -575,7 +574,7 @@ TextureImporter:
         width: 109
         height: 435
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -596,7 +595,7 @@ TextureImporter:
         width: 112
         height: 437
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -617,7 +616,7 @@ TextureImporter:
         width: 114
         height: 461
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -638,7 +637,7 @@ TextureImporter:
         width: 101
         height: 424
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -659,7 +658,7 @@ TextureImporter:
         width: 916
         height: 819
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -680,7 +679,7 @@ TextureImporter:
         width: 917
         height: 899
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -688,6 +687,90 @@ TextureImporter:
       bones: []
       spriteID: bccbce5aa38ec2c45829bc18bc86bc8d
       internalID: 1686172207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shrap_1
+      rect:
+        serializedVersion: 2
+        x: 2019
+        y: 607
+        width: 287
+        height: 369
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8bdf2079bdd2c2f4f93ca28ded97c1d9
+      internalID: 1986972550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shrap_2
+      rect:
+        serializedVersion: 2
+        x: 2333
+        y: 805
+        width: 214
+        height: 188
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 894293407f0073041af2edf4419663fd
+      internalID: 301705134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shrap_3
+      rect:
+        serializedVersion: 2
+        x: 2310
+        y: 541
+        width: 208
+        height: 194
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f46ef4dc2ddfec54b9b02898e59b218f
+      internalID: 2041656080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shrap_4
+      rect:
+        serializedVersion: 2
+        x: 2046
+        y: 250
+        width: 260
+        height: 218
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e3077ccdae2e5554a9e92fa25b3883ae
+      internalID: -1367545669
       vertices: []
       indices: 
       edges: []
@@ -718,6 +801,7 @@ TextureImporter:
       ufo_1: -1424672688
       sprites_10: 405627948
       cloud_2: 151275579
+      shrap_4: -1367545669
       star_4: 618065584
       rocket_1: -250560903
       sprites_11: 397989088
@@ -733,7 +817,10 @@ TextureImporter:
       sprites_8: -854270051
       sprites_6: -611507256
       star_1: 1073564893
+      shrap_1: 1986972550
+      shrap_3: 2041656080
       cloud_4: -715200976
+      shrap_2: 301705134
       laser_1: -2084287233
   spritePackingTag: 
   pSDRemoveMatte: 0

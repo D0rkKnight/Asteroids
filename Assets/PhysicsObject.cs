@@ -8,6 +8,7 @@ public class PhysicsObject : MonoBehaviour
 
     public float spinVelo;
     public Vector2 moveVelo;
+    public bool pushRotable = false; // Some items are spun around when force is exerted upon them
 
     // Start is called before the first frame update
     void Start()

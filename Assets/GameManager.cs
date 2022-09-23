@@ -160,7 +160,7 @@ public class GameManager : MonoBehaviour
         return spawn;
     }
 
-    public static void pulseAt(Vector2 pos, float radius, float strength, GameObject[] banList)
+    public static void pulseAt(GameObject caster, Vector2 pos, float radius, float strength, GameObject[] banList, int dmg = 0)
     {
         ScreenWrapper pulse = Instantiate(sing.castZonePrefab, pos, Quaternion.identity);
         pulse.GetComponent<CircleCollider2D>().radius = radius;
@@ -176,7 +176,19 @@ public class GameManager : MonoBehaviour
             if (phys != null)
             {
                 Vector2 newVelo = phys.moveVelo + strength * ((Vector2)obj.transform.position - pos).normalized;
-                rotateWithVeloChange(phys, newVelo);
+
+                // Some objects aren't rotable
+                if (phys.pushRotable)
+                    rotateWithVeloChange(phys, newVelo);
+                else
+                    phys.moveVelo = newVelo;
+            }
+
+            FlyingObject fObj = obj.GetComponent<FlyingObject>();
+
+            if (fObj != null && dmg > 0)
+            {
+                fObj.hitIfOpposing(caster);
             }
         });
     }

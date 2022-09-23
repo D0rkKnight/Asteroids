@@ -217,6 +217,7 @@ MonoBehaviour:
   profile: {fileID: 11400000, guid: e9db77635e6e1514b9f78dba6d11abc0, type: 2}
   spinVelo: 0
   moveVelo: {x: 0, y: 0}
+  pushRotable: 1
 --- !u!114 &7102178548097759815
 MonoBehaviour:
   m_ObjectHideFlags: 0

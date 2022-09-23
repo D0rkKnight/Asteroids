@@ -19,6 +19,10 @@ public class Asteroid : FlyingObject, GhostCollidable
         // Destroy this asteroid
         Destroy(gameObject);
 
+        // Add score!
+        GameManager.sing.score += (size + 1) * 100;
+
+        // Don't split if smallest size already
         if (size == 0)
             return new Asteroid[0];
 
@@ -39,9 +43,6 @@ public class Asteroid : FlyingObject, GhostCollidable
 
             ret[i] = child;
         }
-
-        // Add score!
-        GameManager.sing.score += (size + 1) * 100;
 
         return ret;
     }

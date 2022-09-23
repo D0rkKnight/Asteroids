@@ -177,7 +177,7 @@ public class Player : FlyingObject
         if (!context.performed || !pulseAvailable)
             return;
 
-        GameManager.pulseAt(transform.position, pulseRadius, pulseStrength, new GameObject[] { gameObject });
+        GameManager.pulseAt(gameObject, transform.position, pulseRadius, pulseStrength, new GameObject[] { gameObject });
 
         float floatingParryRadius = parryRadius;
         if (hyperAble)
