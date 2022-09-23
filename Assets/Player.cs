@@ -75,7 +75,7 @@ public class Player : FlyingObject
         rendCtrl = GetComponent<RendererController>();
     }
 
-    private void Start()
+    public override void onStart()
     {
         phys.profile = regProfile;
     }

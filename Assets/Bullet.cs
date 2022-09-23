@@ -22,7 +22,7 @@ public class Bullet : FlyingObject, GhostCollidable
     }
 
     // Update is called once per frame
-    void onUpdate()
+    public override void onUpdate()
     {
         base.onUpdate();
     }
