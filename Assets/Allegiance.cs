@@ -11,6 +11,7 @@ public class Allegiance : MonoBehaviour
     public ALIGN alignment = ALIGN.PLAYER;
 
     public static ALIGN[] opp = new ALIGN[2];
+    public bool friendlyFire = false;
 
     // Start is called before the first frame update
     void Start()
@@ -27,6 +28,6 @@ public class Allegiance : MonoBehaviour
 
     public bool isOpponent(Allegiance alleg)
     {
-        return opp[(int)alignment] == alleg.alignment;
+        return opp[(int)alignment] == alleg.alignment || friendlyFire;
     }
 }

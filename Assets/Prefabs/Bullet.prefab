@@ -231,3 +231,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alignment: 0
+  friendlyFire: 0

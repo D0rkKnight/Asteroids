@@ -1116,7 +1116,7 @@ MonoBehaviour:
   players:
   - {fileID: 0}
   playerPrefab: {fileID: 5356658205882211374, guid: 207092785164e22448cc6f9f9a76a752, type: 3}
-  spawnProfile: {fileID: 11400000, guid: eeadc1a13598021409e14b0197f5270c, type: 2}
+  spawnProfile: {fileID: 11400000, guid: ae2e6e0c2c6c3064d83da7111cd93f96, type: 2}
   baseAstWeightTarget: 5
   astSpawnSpin: 20
   playerSpawnBlockRange: 7

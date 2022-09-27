@@ -35,7 +35,13 @@ public class EnemyUFO : FlyingObject
                     Quaternion.Euler(0, 0, deg + 90));
 
                 laser.phys.moveVelo = dir * laserSpeed;
-                laser.GetComponent<Allegiance>().alignment = Allegiance.ALIGN.ENEMY;
+
+                Allegiance lAlleg = laser.GetComponent<Allegiance>();
+                lAlleg.alignment = Allegiance.ALIGN.ENEMY;
+                lAlleg.friendlyFire = true;
+
+                // Make sure you can't shoot yourself even with friendly fire
+                laser.GetComponent<ScreenWrapper>().colBanList.Add(gameObject);
             }
 
             yield return new WaitForSeconds(1.0f / laserFirerate);

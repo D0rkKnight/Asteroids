@@ -21,7 +21,6 @@ public class ScreenWrapper : MonoBehaviour
     void Start()
     {
         ghosts = new GameObject[3, 3];
-        colBanList = new List<GameObject>();
 
         // Collect collision events from elsewhere
         foreach (GhostCollidable collTarget in GetComponents<GhostCollidable>())
@@ -55,17 +54,44 @@ public class ScreenWrapper : MonoBehaviour
 
         // Set tag
         ghost.tag = "Untagged";
-        updateGhost(x, y, ghost);
+        updateGhost(x, y, ghost, true);
 
         onSetupObject.Invoke(ghost);
 
         return ghost;
     }
 
-    private void updateGhost(float x, float y, GameObject ghost)
+    private void updateGhost(float x, float y, GameObject ghost, bool forceAdopt = false)
     {
         ghost.transform.position = transform.position + new Vector3(x, y);
         ghost.transform.rotation = transform.rotation;
+
+        // Collect all renderers for bounds checking
+        Renderer[] rends = ghost.GetComponents<Renderer>();
+        bool visible = false;
+        if (rends.Length > 0 && !forceAdopt)
+        {
+            Bounds b1 = rends[0].bounds;
+            foreach (Renderer rend in rends)
+            {
+                Bounds bComp = rend.bounds;
+                b1.SetMinMax(Vector2.Min(b1.min, bComp.min), Vector2.Max(bComp.max, bComp.max));
+                b1.extents = new Vector3(b1.extents.x, b1.extents.y, 1000f);
+            }
+
+            GameManager.getGameCorners(out Vector2 bl, out Vector2 ur);
+
+            Bounds b2 = new Bounds();
+            b2.SetMinMax(bl, ur);
+            b2.extents = new Vector3(b2.extents.x, b2.extents.y, 1000f);
+
+            visible = b1.Intersects(b2);
+        }
+
+        bool renderToScreen = visible || forceAdopt;
+        ghost.SetActive(renderToScreen);
+        if (!renderToScreen)
+            return;
 
         SpriteRenderer sprRend = GetComponent<SpriteRenderer>();
         if (sprRend != null)
@@ -148,7 +174,7 @@ public class ScreenWrapper : MonoBehaviour
 
     private void OnDestroy()
     {
-        foreach (GameObject g in ghosts)
+        foreach (GameObject g in ghosts) if (g != null)
             Destroy(g);
     }
 
@@ -170,7 +196,7 @@ public class ScreenWrapper : MonoBehaviour
     {
         WrapGhost ghost = obj.GetComponent<WrapGhost>();
         if (ghost != null)
-            return obj.gameObject;
+            return ghost.parent.gameObject;
 
         return obj;
     }

@@ -6,7 +6,7 @@ using UnityEngine;
 public class Utilities
 {
     public static string[] copyBanList = new string[] {
-        "usedByComposite", "density", "tag"
+        "usedByComposite", "density", "tag", "bounds"
     }; 
 
     public static Component copyComponent(Component comp, GameObject target)
