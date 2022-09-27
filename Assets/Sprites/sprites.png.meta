@@ -3,7 +3,7 @@ guid: 837dad2f981d1ea4fbb4be6481e18e8e
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -63,6 +63,7 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -671,7 +672,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: beemine_1
+      name: tyler_jr_1
       rect:
         serializedVersion: 2
         x: 1066
@@ -700,7 +701,7 @@ TextureImporter:
         width: 287
         height: 369
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -721,7 +722,7 @@ TextureImporter:
         width: 214
         height: 188
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -742,7 +743,7 @@ TextureImporter:
         width: 208
         height: 194
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -763,7 +764,7 @@ TextureImporter:
         width: 260
         height: 218
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -790,6 +791,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      tyler_jr_1: 1686172207
       star_3: 1086043213
       sprites_1: 772284775
       laser_3: -1208804544
@@ -806,7 +808,6 @@ TextureImporter:
       rocket_1: -250560903
       sprites_11: 397989088
       sprites_0: -88579214
-      beemine_1: 1686172207
       sprites_9: -181071474
       sprites_2: -1167821249
       sprites_5: -478177048
