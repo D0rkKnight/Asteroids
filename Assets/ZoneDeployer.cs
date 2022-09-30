@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(ScreenWrapper))]
 public class ZoneDeployer : MonoBehaviour
 {
-    float life = 0.1f;
+    public float life = 0.1f;
 
     // Start is called before the first frame update
     void Start()
@@ -17,6 +17,8 @@ public class ZoneDeployer : MonoBehaviour
     {
         yield return new WaitForSeconds(dur);
 
-        GetComponent<ScreenWrapper>().onCollision.RemoveAllListeners();
+        // Remove all colliders on the object
+        foreach (Collider2D c in GetComponents<Collider2D>())
+            Destroy(c);
     }
 }

@@ -60,8 +60,6 @@ public class Player : FlyingObject
 
     public bool invuln = false;
 
-    public Afterimage afterimagePrefab;
-
     // Object links
     public Transform noseTrans;
     public TrailRenderer trail;
@@ -177,7 +175,7 @@ public class Player : FlyingObject
         if (!context.performed || !pulseAvailable)
             return;
 
-        GameManager.pulseAt(gameObject, transform.position, pulseRadius, pulseStrength, new GameObject[] { gameObject });
+        // GameManager.pulseAt(gameObject, transform.position, pulseRadius, pulseStrength, new GameObject[] { gameObject });
 
         float floatingParryRadius = parryRadius;
         if (hyperAble)
@@ -277,7 +275,7 @@ public class Player : FlyingObject
         // Calculate afterimage
         float aiDur = 0.1f;
         int iterations = (int) (dur / aiDur);
-        StartCoroutine(spawnAfterImages(aiDur, iterations));
+        StartCoroutine(GameManager.spawnAfterImages(gameObject, aiDur, iterations));
 
         // Open a redirect window
         float redirWind = Mathf.Min(0.05f, dur);
@@ -345,20 +343,6 @@ public class Player : FlyingObject
         pulseAvailable = false;
         yield return new WaitForSeconds(dur);
         pulseAvailable = true;
-    }
-
-    public IEnumerator spawnAfterImages(float dur, int iterations)
-    {
-        for (int i=0; i<iterations; i++)
-        {
-            // Spawn an afterimage
-            Afterimage ai = Instantiate(afterimagePrefab, transform.position, transform.rotation);
-
-            // Copy over sprite
-            ai.rend.sprite = GetComponent<SpriteRenderer>().sprite;
-
-            yield return new WaitForSeconds(dur);
-        }
     }
 
     // Use a centralized color switch for this, it's easier

@@ -16,6 +16,12 @@ public class FlyingObject : MonoBehaviour, GhostCollidable
 
     public bool destroyed = false; // Tag for same frame collisions
 
+    public enum TYPE
+    {
+        NORMAL, PROJECTILE, SHRAPNEL, SENTINEL
+    }
+    public TYPE type;
+
     // Horrible OOP jank
     public void Awake()
     {
@@ -84,13 +90,26 @@ public class FlyingObject : MonoBehaviour, GhostCollidable
         return new FlyingObject[0];
     }
 
-    public void hitIfOpposing(GameObject collision)
+    public void hitIfValid(GameObject src)
     {
-        FlyingObject fObj = collision.GetComponent<FlyingObject>();
+        FlyingObject fObj = src.GetComponent<FlyingObject>();
 
+        // Pulses aren't flying objects
+        if (fObj != null)
+        {
+            // Bullets cant hit bullets
+            if (type == TYPE.PROJECTILE && fObj.type == TYPE.PROJECTILE)
+                return;
+
+            // Shrapnel cant hit shrapnel since its meant to shred other items not each other
+            if (type == TYPE.SHRAPNEL && fObj.type == TYPE.SHRAPNEL)
+                return;
+        }
+
+        // Check for opposition
         bool allegPassed = true;
         Allegiance thisAlleg = GetComponent<Allegiance>();
-        Allegiance collAlleg = collision.GetComponent<Allegiance>();
+        Allegiance collAlleg = src.GetComponent<Allegiance>();
         if (thisAlleg != null && collAlleg != null)
             allegPassed = thisAlleg.isOpponent(collAlleg);
 
@@ -104,6 +123,6 @@ public class FlyingObject : MonoBehaviour, GhostCollidable
         if (destroyed)
             return;
 
-        hitIfOpposing(collision);
+        hitIfValid(collision);
     }
 }

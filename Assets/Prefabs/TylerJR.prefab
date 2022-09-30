@@ -57,6 +57,7 @@ MonoBehaviour:
   destroyOnOOB: 1
   loopOnFullEntry: 1
   destroyed: 0
+  type: 0
   shrapnel:
   - {fileID: 1272393093499553964, guid: 68c3879eb9c561741912cfde158c7637, type: 3}
   - {fileID: 8219217361005493634, guid: 1eaf3fd4247207844bbd4aae397bc7e1, type: 3}
@@ -192,6 +193,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alignment: 1
+  friendlyFire: 0
 --- !u!114 &7655022046902373168
 MonoBehaviour:
   m_ObjectHideFlags: 0

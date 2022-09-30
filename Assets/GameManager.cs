@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     public const string fObjTag = "FlyingObject";
 
     public ScreenWrapper castZonePrefab;
+    public Afterimage afterimagePrefab;
 
     // Difficulty control
     public int pointsPerAstWeight = 500;
@@ -160,17 +161,14 @@ public class GameManager : MonoBehaviour
         return spawn;
     }
 
-    public static void pulseAt(GameObject caster, Vector2 pos, float radius, float strength, GameObject[] banList, int dmg = 0)
+    public static void pulseAt(GameObject caster, Vector2 pos, float radius, float strength, GameObject[] banList)
     {
         ScreenWrapper pulse = Instantiate(sing.castZonePrefab, pos, Quaternion.identity);
         pulse.GetComponent<CircleCollider2D>().radius = radius;
         pulse.GetComponent<CircleVisualizer>().radius = radius;
+        pulse.colBanList = new List<GameObject>(banList);
 
         pulse.onCollision.AddListener((GameObject obj) => {
-            if (System.Array.Exists(banList, (GameObject gObj) => { return gObj == obj;  })) {
-                return; // Item is banned
-            }
-
             PhysicsObject phys = obj.GetComponent<PhysicsObject>();
 
             if (phys != null)
@@ -185,11 +183,6 @@ public class GameManager : MonoBehaviour
             }
 
             FlyingObject fObj = obj.GetComponent<FlyingObject>();
-
-            if (fObj != null && dmg > 0)
-            {
-                fObj.hitIfOpposing(caster);
-            }
         });
     }
 
@@ -198,28 +191,24 @@ public class GameManager : MonoBehaviour
         ScreenWrapper parry = Instantiate(sing.castZonePrefab, pos, Quaternion.identity);
         parry.GetComponent<CircleCollider2D>().radius = radius;
         parry.GetComponent<CircleVisualizer>().radius = radius;
+        parry.colBanList = new List<GameObject>(banList);
 
         parry.onCollision.AddListener((GameObject obj) => {
-            if (System.Array.Exists(banList, (GameObject gObj) => { return gObj == obj; }))
-            {
-                return; // Item is banned
-            }
-
             PhysicsObject phys = obj.GetComponent<PhysicsObject>();
+            FlyingObject fObj = obj.GetComponent<FlyingObject>();
+            Bullet bul = obj.GetComponent<Bullet>();
 
-            Asteroid ast = obj.GetComponent<Asteroid>();
-            if (ast != null)
+            /*if (fObj != null)
             {
-                FlyingObject[] children = ast.onHit(null);
-                foreach (FlyingObject fObj in children)
-                    parry.GetComponent<ScreenWrapper>().colBanList.Add(fObj.gameObject);
-            }
+                FlyingObject[] children = fObj.onHit(null);
+                foreach (FlyingObject child in children)
+                    parry.GetComponent<ScreenWrapper>().colBanList.Add(child.gameObject);
+            }*/
 
             // Parry boosts
-            Bullet bul = obj.GetComponent<Bullet>();
             if (bul != null)
             {
-                bul.transform.localScale *= 2;
+                bul.transform.localScale *= 1.7f;
 
                 // Reflect it
                 Vector2 dir = ((Vector2)bul.transform.position - pos).normalized;
@@ -247,6 +236,9 @@ public class GameManager : MonoBehaviour
 
                 if (cAlleg != null && bAlleg != null)
                     bAlleg.alignment = cAlleg.alignment;
+
+                // Put on trail
+                bul.StartCoroutine(spawnAfterImages(bul.gameObject, 1f/5, (int) bul.life * 5));
             }
             else if (phys != null)
             {
@@ -337,6 +329,9 @@ public class GameManager : MonoBehaviour
         }
         players[index].transform.position = pos;
 
+        // Pulse at the location
+        pulseAt(players[index].gameObject, pos, 3f, 1f, new GameObject[] { players[index].gameObject });
+
         StartCoroutine(players[index].invulnFor(2f));
     }
 
@@ -360,5 +355,20 @@ public class GameManager : MonoBehaviour
             Destroy(obj);
 
         gameIsOver = false;
+    }
+
+    public static IEnumerator spawnAfterImages(GameObject caster, float dur, int iterations)
+    {
+        for (int i = 0; i < iterations; i++)
+        {
+            // Spawn an afterimage
+            Afterimage ai = Instantiate(sing.afterimagePrefab, caster.transform.position, caster.transform.rotation);
+            ai.transform.localScale = caster.transform.localScale;
+
+            // Copy over sprite
+            ai.rend.sprite = caster.GetComponent<SpriteRenderer>().sprite;
+
+            yield return new WaitForSeconds(dur);
+        }
     }
 }

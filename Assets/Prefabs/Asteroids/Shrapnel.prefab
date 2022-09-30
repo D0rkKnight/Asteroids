@@ -11,6 +11,10 @@ PrefabInstance:
       propertyPath: profile
       value: 
       objectReference: {fileID: 11400000, guid: e027b2a2706a13f419eb9319aaa9ca79, type: 2}
+    - target: {fileID: 3755831250281213749, guid: 0b52c882d4b729546b2ae2690347f8d1, type: 3}
+      propertyPath: friendlyFire
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7980633757052707364, guid: 0b52c882d4b729546b2ae2690347f8d1, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -54,6 +58,10 @@ PrefabInstance:
     - target: {fileID: 7980633757052707364, guid: 0b52c882d4b729546b2ae2690347f8d1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7980633757052707365, guid: 0b52c882d4b729546b2ae2690347f8d1, type: 3}
+      propertyPath: type
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7980633757052707802, guid: 0b52c882d4b729546b2ae2690347f8d1, type: 3}
       propertyPath: m_Name

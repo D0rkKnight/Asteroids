@@ -65,6 +65,7 @@ public class ScreenWrapper : MonoBehaviour
     {
         ghost.transform.position = transform.position + new Vector3(x, y);
         ghost.transform.rotation = transform.rotation;
+        ghost.transform.localScale = transform.localScale;
 
         // Collect all renderers for bounds checking
         Renderer[] rends = ghost.GetComponents<Renderer>();
@@ -187,6 +188,11 @@ public class ScreenWrapper : MonoBehaviour
     {
         GameObject trueObj = tryGetTrueObject(collision.gameObject);
         if (colBanList.Contains(trueObj))
+            return;
+
+        // Check true object's col ban list too, if it has one
+        ScreenWrapper oppWrap = trueObj.GetComponent<ScreenWrapper>();
+        if (oppWrap != null && oppWrap.colBanList.Contains(gameObject))
             return;
 
         onCollision.Invoke(trueObj);

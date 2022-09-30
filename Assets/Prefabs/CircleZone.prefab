@@ -74,6 +74,7 @@ MonoBehaviour:
   onCollision:
     m_PersistentCalls:
       m_Calls: []
+  colBanList: []
   loopable: 1
 --- !u!114 &4101522318080766280
 MonoBehaviour:
@@ -214,3 +215,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa0853b5206a0eb499bbf2272676ca09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  life: 0.01

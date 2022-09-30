@@ -28,6 +28,7 @@ public class Allegiance : MonoBehaviour
 
     public bool isOpponent(Allegiance alleg)
     {
-        return opp[(int)alignment] == alleg.alignment || friendlyFire;
+        // Friendly fire goes both ways
+        return opp[(int)alignment] == alleg.alignment || friendlyFire || alleg.friendlyFire;
     }
 }

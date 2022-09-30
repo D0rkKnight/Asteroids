@@ -28,6 +28,7 @@ public class StarField : MonoBehaviour
                 // Instantiate star
                 BGStar s = Instantiate(starPrefab, transform);
                 s.transform.position = pointer + Random.insideUnitCircle * posVariance;
+                s.transform.position += Vector3.back;
                 stars.Add(s);
 
                 pointer.x += distBetween;

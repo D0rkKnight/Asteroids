@@ -57,6 +57,7 @@ MonoBehaviour:
   destroyOnOOB: 1
   loopOnFullEntry: 1
   destroyed: 0
+  type: 0
   laserPrefab: {fileID: 7363072498781501028, guid: 02ec80ca0da7fe5408575768e6021531, type: 3}
   laserFirerate: 0.3
   laserSpeed: 4
@@ -251,6 +252,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alignment: 1
+  friendlyFire: 0
 --- !u!114 &4565886254028109148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -266,3 +268,4 @@ MonoBehaviour:
   profile: {fileID: 11400000, guid: 47f77c7844fb96f4da4b9bf15cc620d5, type: 2}
   spinVelo: 0
   moveVelo: {x: 0, y: 0}
+  pushRotable: 0

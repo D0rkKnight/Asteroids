@@ -59,6 +59,7 @@ MonoBehaviour:
   destroyOnOOB: 1
   loopOnFullEntry: 0
   destroyed: 0
+  type: 1
   life: 3
   piercing: 1
 --- !u!212 &8336660168687126278

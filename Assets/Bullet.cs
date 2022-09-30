@@ -10,7 +10,7 @@ public class Bullet : FlyingObject, GhostCollidable
     public int piercing = 1;
 
     // Start is called before the first frame update
-    void Start()
+    public override void onStart()
     {
         SpriteResolver resolver = GetComponent<SpriteResolver>();
 
